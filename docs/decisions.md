@@ -1,15 +1,21 @@
 # Decisions
 
-Log the decisions that actually shaped this codebase — the ones where a real alternative existed and
-you picked one. At least five entries. For each: what you chose, what you rejected, and why. At least
-one entry must be a decision you later reversed — say what changed your mind. It can be any entry
-below, not necessarily the last one; add a **Later reversed:** line to whichever one it is.
+This section records the main technical decisions made during the development of the project and the reasons behind them.
 
 ## Decision 1
 
-- **Chose:**
-- **Rejected:**
-- **Why:**
+- **Chose:**-
+  
+  JWT-based authentication with bcrypt for password hashing.
+
+- **Rejected:**-
+
+  Storing passwords directly and using server-side session-based authentication.
+
+- **Why:**-
+
+  JWT works well with the React frontend and Express API, while bcrypt keeps user passwords securely hashed. It also makes it straightforward to protect API routes and handle role-based access.
+
 
 ## Decision 2
 

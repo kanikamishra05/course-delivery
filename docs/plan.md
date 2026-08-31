@@ -43,3 +43,26 @@ Set up the basic client and server application, project structure, MongoDB conne
 ### Result
 
 M01 was completed. The frontend and backend structure is in place, the required Mongoose models were created, MongoDB Atlas connection was verified, and the health endpoint was tested successfully.
+
+---
+
+## M02 — Authentication and Roles
+
+**Scope**
+
+Add user authentication and role-based access for learners and instructors.
+
+**What I planned to do**
+
+* Add user registration and login
+* Hash passwords using bcrypt
+* Add JWT-based authentication
+* Add authentication and role authorization middleware
+* Add login and registration pages
+* Protect authenticated routes
+* Add separate access for learners and instructors
+* Verify the authentication flow
+
+### Result
+
+M02 was completed and verified successfully. Registration, login, JWT authentication, password protection and role-based access are working correctly. Protected and guest routes were also tested successfully.

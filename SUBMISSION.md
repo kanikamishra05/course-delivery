@@ -1,11 +1,11 @@
 # Submission
 
-Fill this in and commit it. This is the first file we open.
+This file gives a quick overview of the project, its current progress, and the information needed to review the application.
 
 ## Links
 
-- **GitHub repository:** <public repo URL — to be added after repository is created>
-- **Live application:** <deployed URL — to be added after deployment (M13)>
+- **GitHub repository:** -> https://github.com/kanikamishra05/course-delivery
+- **Live application:** <deployed URL — to be added after deployment (M07)>
 
 ## Notes for the reviewer
 
@@ -19,8 +19,8 @@ a period of idle may take 30–60 seconds to respond. This is expected behaviour
 
 | Role | Email | Password |
 |------|-------|----------|
-| Instructor | <to be added after seed data is created (M13)> | |
-| Learner | <to be added after seed data is created (M13)> | |
+| Instructor | <to be added after seed data is created (M06)> | |
+| Learner | <to be added after seed data is created (M06)> | |
 
 ## Stack
 
@@ -38,7 +38,7 @@ Mark each honestly. Partial is fine — say what is partial.
 
 | # | Goal | Status | Notes |
 |---|------|--------|-------|
-| 1 | Accounts and roles | Not done | |
+| 1 | Accounts and roles | Complete | Registration, login, JWT authentication, protected routes, role authorization, session persistence, and logout are implemented and verified. |
 | 2 | Courses | Not done | |
 | 3 | Lessons inside courses | Not done | |
 | 4 | Course and progress states | Not done | |

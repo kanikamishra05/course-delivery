@@ -19,6 +19,10 @@ app.get('/api/health', (req, res) => {
   res.status(200).json({ success: true });
 });
 
+// Auth routes
+const authRoutes = require('./routes/authRoutes');
+app.use('/api/auth', authRoutes);
+
 // 404 handler for unrecognised routes
 app.use((req, res) => {
   res.status(404).json({ success: false, message: 'Route not found' });

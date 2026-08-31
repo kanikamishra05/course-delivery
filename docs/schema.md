@@ -1,12 +1,6 @@
 # Schema
 
-Answer each of these, in your own words.
-
-- Table by table: what columns and types does each one have?
-- Which relationships are one-to-many, and which are many-to-many?
-- Which constraints are enforced by the database, and which by application code — and why did you draw the line there?
-- What did you deliberately denormalise?
-- What would break first if this had 100x the data?
+This section describes the database collections used in the project, their main fields, relationships, and the constraints applied to the data.
 
 ---
 
@@ -26,7 +20,7 @@ Answer each of these, in your own words.
 
 **Indexes:** unique index on `email` (enforced by Mongoose via `unique: true`).
 
-**Note:** `password` has `select: false` — it will never appear in API responses unless explicitly selected with `.select('+password')`. Password hashing is implemented in M02 auth middleware, not in this model.
+**Note:** `password` has `select: false` — it will not appear in API responses unless explicitly selected with `.select('+password')`. Password hashing is handled during registration using bcrypt.
 
 ---
 
@@ -168,14 +162,16 @@ The `ACTIVITY_EVENT_TYPES` array is also exported from this module so service co
 - `{ enrollmentId, lessonId }` on Progress — unique compound index → duplicate lesson completion rejected at DB level
 - `{ enrollmentId }` on Alert — unique index → one alert record per enrollment
 
-**Application-level (service layer, implemented in M02+):**
-- Course state machine transitions (DRAFT→PUBLISHED, etc.) — cross-collection logic; not possible with a DB constraint
-- Publishing guard (course must have ≥1 lesson) — requires counting Lesson documents
-- Enrollment only allowed for PUBLISHED courses — requires checking Course.status
-- Inactivity alert reappearance logic — multi-field comparison across Enrollment and Alert
-- ActivityLog immutability — enforced by absence of UPDATE/DELETE route handlers
+**Application-level (implemented in M02 or planned for later modules):**
+- Password hashing and authentication — implemented in M02 using bcrypt and JWT
+- Role-based access — implemented in M02 through authentication and authorization middleware
+- Course state machine transitions — planned for later modules
+- Publishing guard — planned for later modules
+- Enrollment rules — planned for later modules
+- Inactivity alert reappearance logic — planned for later modules
+- ActivityLog immutability — planned for later modules
 
-**Why the line is drawn here:** MongoDB has no support for cross-document CHECK constraints. Business rules requiring multi-collection reads (e.g. "does this course have lessons?") must live in the service layer where full application context is available.
+**Why the line is drawn here:** MongoDB does not provide traditional relational-style CHECK constraints across multiple documents. Business rules that depend on multiple documents or collections are therefore handled in the application layer.
 
 ---
 

@@ -1,17 +1,9 @@
 # Architecture
 
-Answer each of these, in your own words, once the system has taken real shape.
+This section describes how the main parts of the application are connected and how they work together. It also explains where each part runs and the flow of a typical user request through the system.
 
-- What are the moving pieces, and how do they talk to each other?
-- Where does each piece run?
-- What is the request path for one representative user action, end to end?
-- What did you decide *not* to build, and why?
 
----
-
-<!-- Planned architecture — to be expanded with real detail once implementation is complete -->
-
-## Planned architecture (to be filled in detail after implementation)
+## Current architecture
 
 The system follows a simple client-server architecture:
 
@@ -29,39 +21,35 @@ Node.js + Express (Backend)
 
 **Moving pieces:**
 
-- **React + Vite frontend** — renders the UI, handles routing (React Router), communicates with the backend via Axios over HTTP/JSON. Runs in the browser.
-- **Node.js + Express backend** — REST API server. Handles authentication, authorization, validation, business rules, database access, CSV generation, and dashboard aggregation. Runs on Render (production) or `localhost:5000` (development).
-- **MongoDB database** — stores all persistent data. Accessed via Mongoose. Runs on MongoDB Atlas (production) or a local MongoDB instance (development).
+- **React + Vite frontend** — renders the UI, handles routing (React Router),manages authentication state, and communicates with the backend via Axios over HTTP/JSON. Runs in the browser.
+- **Node.js + Express backend** — REST API server. Currently handles authentication, authorization, validation, and database access. Additional business features will be added in later steps. Runs on Render (production) or `localhost:5000` (development).
+- **MongoDB database** — stores persistent application data and is accessed through Mongoose. MongoDB Atlas is currently used for development.
 
 **Where each piece runs:**
 
-| Piece | Development | Production |
-|-------|-------------|------------|
-| Frontend | `localhost:5173` (Vite dev server) | Vercel |
-| Backend | `localhost:5000` (nodemon) | Render |
-| Database | Local MongoDB or Atlas dev cluster | MongoDB Atlas |
+| Piece | Development |
+|-------|-------------|
+| Frontend | `localhost:5173` (Vite dev server) |
+| Backend | `localhost:5000` (nodemon) |
+| Database | MongoDB Atlas |
 
-**Representative request path — "Learner marks a lesson complete":**
+**Representative request path — "User logs in":**
 
-```
 Browser (React)
-    ↓ PATCH /api/lessons/:lessonId/progress
-    ↓ Cookie: JWT token
+    ↓
+POST /api/auth/login
+    ↓
 Express Router
     ↓
-authenticate middleware  (verify JWT, attach req.user)
+Auth Controller
     ↓
-authorize middleware     (verify role = LEARNER)
+Find user in MongoDB
     ↓
-Progress Controller
+Compare password using bcrypt
     ↓
-Progress Service
-    ├── Find enrollment (learnerId + courseId) — verify learner is enrolled
-    ├── Find lesson — verify lesson belongs to course
-    ├── Upsert Progress record (enrollmentId + lessonId)
-    ├── Update Enrollment.lastProgressAt = now()
-    └── Append ActivityLog event (PROGRESS_UPDATED)
+Generate JWT
     ↓
-200 { success: true, data: { progressStatus, lessonsCompleted, totalLessons } }
-```
+Return JWT + user data
+    ↓
+React stores JWT and  authentication state
 
