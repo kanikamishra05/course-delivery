@@ -39,11 +39,11 @@ Mark each honestly. Partial is fine — say what is partial.
 | # | Goal | Status | Notes |
 |---|------|--------|-------|
 | 1 | Accounts and roles | Complete | Registration, login, JWT authentication, protected routes, role authorization, session persistence, and logout are implemented and verified. |
-| 2 | Courses | Not done | |
-| 3 | Lessons inside courses | Not done | |
-| 4 | Course and progress states | Not done | |
+| 2 | Courses | Complete |Instructors can create, edit, publish, archive, and restore their own courses. |
+| 3 | Lessons inside courses | Complete |Instructors can add, edit, delete, and order lessons within their own courses. |
+| 4 | Course and progress states | Partial | Course states (DRAFT, PUBLISHED, ARCHIVED) and state transitions are implemented. Learner progress states are part of a later module. |
 | 5 | Enrollment | Not done | |
-| 6 | Finding courses | Not done | |
+| 6 | Finding courses | Complete | Public and learner course discovery supports search, category filtering, sorting, and pagination. |
 | 7 | Bulk enrollment + CSV export | Not done | |
 | 8 | Dashboard | Not done | |
 | 9 | Immutable activity history | Not done | |

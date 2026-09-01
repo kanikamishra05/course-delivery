@@ -51,3 +51,31 @@ I reviewed the implementation and verified all M02 functionality successfully. M
 Role authorization was tested directly because the course APIs that will use it are part of the next step, and the frontend functionality was verified through the production build.
 
 No major changes were required to the implementation.
+
+---
+
+## M03 — Course and Lesson Management
+
+### What I was trying to achieve
+
+Add course and lesson management so instructors can create and manage their courses, while learners and public users can browse published courses.
+
+### Prompt
+
+Asked the AI agent to read the assignment requirements and existing project files, then implement only the M03 course and lesson management requirements.
+
+The requested scope included course creation and editing, course listing and search, course details, lesson creation and management, course status changes, pagination, and role-based access and ownership checks.
+
+### What I got
+
+The agent implemented the course and lesson management functionality for both the backend and frontend. Instructors can create and manage courses and lessons, change course status, and manage only their own courses. Learners and public users can browse published courses.
+
+The implementation also includes search, category filtering, pagination, lesson ordering, validation, and access control.
+
+### What I corrected
+
+I reviewed the implementation and verified the M03 functionality through runtime testing. The backend and frontend checks passed, and all runtime tests were successful.
+
+The tests covered course creation, course visibility, course updates, publishing, archiving, restoring, lesson management, validation, role authorization, and instructor ownership.
+
+No major changes were required to the implementation.

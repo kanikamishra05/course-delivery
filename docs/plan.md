@@ -66,3 +66,33 @@ Add user authentication and role-based access for learners and instructors.
 ### Result
 
 M02 was completed and verified successfully. Registration, login, JWT authentication, password protection and role-based access are working correctly. Protected and guest routes were also tested successfully.
+
+---
+
+## M03 — Course and Lesson Management
+
+**Scope**
+
+Add course and lesson management so instructors can create and manage courses, while learners and public users can browse published courses.
+
+**What I planned to do**
+
+* Add course creation and editing
+
+* Add course listing and search
+
+* Add course details
+
+* Add lesson creation, editing, and deletion
+
+* Add course status changes such as publish, archive, and restore
+
+* Add pagination and category filtering
+
+* Add role-based access and instructor ownership checks
+
+* Verify the course and lesson functionality
+
+### Result
+
+M03 was completed and verified successfully. Instructors can create and manage their own courses and lessons, while learners and public users can view published courses. Course status changes, search, filtering, pagination, validation, and access control were also tested successfully.

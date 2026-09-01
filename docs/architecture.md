@@ -21,8 +21,8 @@ Node.js + Express (Backend)
 
 **Moving pieces:**
 
-- **React + Vite frontend** — renders the UI, handles routing (React Router),manages authentication state, and communicates with the backend via Axios over HTTP/JSON. Runs in the browser.
-- **Node.js + Express backend** — REST API server. Currently handles authentication, authorization, validation, and database access. Additional business features will be added in later steps. Runs on Render (production) or `localhost:5000` (development).
+- **React + Vite frontend** — renders the UI, handles routing (React Router),manages authentication state,provides course and lesson management pages, and communicates with the backend via Axios over HTTP/JSON. Runs in the browser.
+- **Node.js + Express backend** — REST API server. Currently handles authentication, authorization, validation,course and lesson management, and database access. Additional business features will be added in later steps. Runs on Render (production) or `localhost:5000` (development).
 - **MongoDB database** — stores persistent application data and is accessed through Mongoose. MongoDB Atlas is currently used for development.
 
 **Where each piece runs:**

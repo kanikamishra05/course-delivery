@@ -23,6 +23,12 @@ app.get('/api/health', (req, res) => {
 const authRoutes = require('./routes/authRoutes');
 app.use('/api/auth', authRoutes);
 
+// Course and lesson routes (M03)
+const courseRoutes = require('./routes/courseRoutes');
+const lessonRoutes = require('./routes/lessonRoutes');
+app.use('/api/courses', courseRoutes);
+app.use('/api/lessons', lessonRoutes);
+
 // 404 handler for unrecognised routes
 app.use((req, res) => {
   res.status(404).json({ success: false, message: 'Route not found' });
@@ -30,7 +36,7 @@ app.use((req, res) => {
 
 // Centralised error handler
 app.use((err, req, res, next) => {
-  console.error(err.stack);
+  console.error("GLOBAL ERROR:", err);
   res.status(err.status || 500).json({
     success: false,
     message: err.message || 'Internal server error',

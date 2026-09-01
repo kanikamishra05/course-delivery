@@ -4,7 +4,7 @@ This section describes the database collections used in the project, their main 
 
 ---
 
-## Implemented Mongoose collections (M01)
+## Implemented Mongoose collections (M01-M03)
 
 ### User — `backend/models/User.js`
 
@@ -43,6 +43,8 @@ This section describes the database collections used in the project, their main 
 - `{ instructorId: 1 }` — filter by instructor
 - `{ createdAt: -1 }` — sort by creation date (newest first)
 
+**Note:** Course status is managed through explicit state transitions rather than allowing arbitrary status changes. The supported flow is `DRAFT → PUBLISHED → ARCHIVED`, with `ARCHIVED → DRAFT` for restoration. Invalid transitions are rejected by the application layer.
+
 ---
 
 ### Lesson — `backend/models/Lesson.js`
@@ -59,6 +61,8 @@ This section describes the database collections used in the project, their main 
 
 **Indexes:**
 - `{ courseId: 1, position: 1 }` — compound index; supports `GET /api/courses/:id/lessons` ordered query efficiently.
+
+**Note:** Lesson order is stored using the `position` field. When a new lesson is created, its position is assigned automatically so lessons are returned in a predictable order.
 
 ---
 
@@ -165,8 +169,9 @@ The `ACTIVITY_EVENT_TYPES` array is also exported from this module so service co
 **Application-level (implemented in M02 or planned for later modules):**
 - Password hashing and authentication — implemented in M02 using bcrypt and JWT
 - Role-based access — implemented in M02 through authentication and authorization middleware
-- Course state machine transitions — planned for later modules
-- Publishing guard — planned for later modules
+- Course state machine transitions — implemented in M03
+- Publishing guard — implemented in M03; a course must have at least one lesson before publishing
+- Course and lesson ownership — implemented in M03; instructors can only modify their own courses and lessons
 - Enrollment rules — planned for later modules
 - Inactivity alert reappearance logic — planned for later modules
 - ActivityLog immutability — planned for later modules

@@ -11,3 +11,5 @@ venv/
 .DS_Store
 summary/
 PROJECT_CONTRACT.md
+test-m03.js
+backend/debug.js

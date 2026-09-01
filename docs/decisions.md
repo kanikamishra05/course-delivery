@@ -19,9 +19,18 @@ This section records the main technical decisions made during the development of
 
 ## Decision 2
 
-- **Chose:**
-- **Rejected:**
-- **Why:**
+- **Chose:**-
+  
+  A separate service layer for course and lesson business logic.
+
+- **Rejected:**-
+  
+  Putting all course and lesson logic directly inside the route controllers.
+
+- **Why:**-
+  
+  Keeping the business logic in a separate service makes the controllers simpler and easier to understand. It also keeps course ownership checks, validation, lesson management, and course status changes in one place, which will make the application easier to extend in later steps.
+  
 
 ## Decision 3
 
