@@ -10,7 +10,7 @@ The planned order is:
 2. Authentication and roles
 3. Course and lesson management
 4. Enrollment and learner progress
-5. Search, bulk operations and dashboard
+5. Search,filtering, sorting, pagination, bulk operations, CSV export and dashboard
 6. Activity history and alerts
 7. Testing, deployment and final submission
 
@@ -79,7 +79,7 @@ Add course and lesson management so instructors can create and manage courses, w
 
 * Add course creation and editing
 
-* Add course listing and search
+* Add course listing
 
 * Add course details
 
@@ -87,7 +87,7 @@ Add course and lesson management so instructors can create and manage courses, w
 
 * Add course status changes such as publish, archive, and restore
 
-* Add pagination and category filtering
+* Add input validation
 
 * Add role-based access and instructor ownership checks
 
@@ -95,4 +95,34 @@ Add course and lesson management so instructors can create and manage courses, w
 
 ### Result
 
-M03 was completed and verified successfully. Instructors can create and manage their own courses and lessons, while learners and public users can view published courses. Course status changes, search, filtering, pagination, validation, and access control were also tested successfully.
+M03 was completed and verified successfully. Instructors can create and manage their own courses and lessons, while learners and public users can view published courses. Course status changes, input validation, role-based access control, and instructor ownership checks were also tested successfully.
+
+---
+
+## M04 — Enrollment and Learner Progress
+
+**Scope**
+
+Add enrollment functionality for learners and instructors, and track learner progress through course lessons.
+
+**What I planned to do**
+
+* Allow learners to self-enroll in published courses
+* Allow instructors to enroll learners by email
+* Prevent duplicate enrollments
+* Prevent enrollment in draft or unpublished courses
+* Add authorization and course ownership checks for instructor enrollment
+* Add learner progress tracking based on completed lessons
+* Track progress states such as NOT_STARTED, IN_PROGRESS, and COMPLETED
+* Calculate learner progress percentage
+* Allow learners to mark lessons as completed or incomplete
+* Ensure progress is scoped to the authenticated learner
+* Add enrolled-course filtering
+* Verify enrollment and learner progress functionality
+
+### Result
+
+M04 was completed and runtime-verified successfully. Learners can self-enroll in published courses, while instructors can enroll learners in their own courses. Duplicate enrollment, unpublished-course enrollment, role authorization, and course ownership restrictions were verified.
+
+Learner progress is calculated from completed lessons and correctly transitions between NOT_STARTED, IN_PROGRESS, and COMPLETED states. Lesson completion and un-completion were also verified.
+

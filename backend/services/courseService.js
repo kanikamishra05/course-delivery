@@ -38,6 +38,13 @@ async function createCourse(instructorId, { title, description, category }) {
 async function listCourses(query, userRole, userId) {
   const filter = buildCourseQuery(query, userRole, userId);
 
+  if (query.enrolled === 'true' && userRole === 'LEARNER' && userId) {
+    const Enrollment = require('../models/Enrollment');
+    const enrollments = await Enrollment.find({ learnerId: userId }, 'courseId').lean();
+    const courseIds = enrollments.map(e => e.courseId);
+    filter._id = { $in: courseIds };
+  }
+
   const page = Math.max(1, parseInt(query.page) || 1);
   const limit = Math.min(50, Math.max(1, parseInt(query.limit) || 10));
   const skip = (page - 1) * limit;

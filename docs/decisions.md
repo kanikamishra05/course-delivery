@@ -34,9 +34,17 @@ This section records the main technical decisions made during the development of
 
 ## Decision 3
 
-- **Chose:**
-- **Rejected:**
-- **Why:**
+- **Chose:**-
+  
+  Keep enrollment logic in a separate service instead of handling it entirely in the controller.
+
+- **Rejected:**-
+  
+  Putting all enrollment checks and database operations directly in the route/controller.
+
+- **Why:**-
+  
+  Enrollment has a few business rules such as checking the course status, preventing duplicate enrollments, and verifying instructor ownership. Keeping these checks in the service keeps the controller simpler and makes the logic easier to maintain.
 
 ## Decision 4
 

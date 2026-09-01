@@ -22,6 +22,9 @@ export default function HomePage() {
           <Link to="/discover">
             <button style={{ padding: '8px 20px', marginRight: 12 }}>Browse Courses</button>
           </Link>
+          <Link to="/my-courses">
+            <button style={{ padding: '8px 20px', marginRight: 12 }}>My Enrolled Courses</button>
+          </Link>
         </p>
       )}
 

@@ -11,4 +11,8 @@ router.put('/:id', authenticate, authorize('INSTRUCTOR'), updateLesson);
 // DELETE /api/lessons/:id
 router.delete('/:id', authenticate, authorize('INSTRUCTOR'), deleteLesson);
 
+// ── Progress (M04) ──────────────────────────────────────────────────────────
+const { updateProgress } = require('../controllers/enrollmentController');
+router.patch('/:id/progress', authenticate, authorize('LEARNER'), updateProgress);
+
 module.exports = router;

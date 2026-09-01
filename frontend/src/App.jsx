@@ -9,6 +9,7 @@ import CreateCoursePage from './pages/CreateCoursePage'
 import EditCoursePage from './pages/EditCoursePage'
 import CourseDiscoveryPage from './pages/CourseDiscoveryPage'
 import CourseDetailPage from './pages/CourseDetailPage'
+import MyCoursesPage from './pages/MyCoursesPage'
 
 // Redirect authenticated users away from login/register
 function GuestRoute({ children }) {
@@ -47,6 +48,7 @@ function AppRoutes() {
 
       {/* Learner course discovery */}
       <Route path="/discover" element={<ProtectedRoute><CourseDiscoveryPage /></ProtectedRoute>} />
+      <Route path="/my-courses" element={<ProtectedRoute roles={['LEARNER']}><MyCoursesPage /></ProtectedRoute>} />
 
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

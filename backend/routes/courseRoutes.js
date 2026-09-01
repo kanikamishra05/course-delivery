@@ -37,4 +37,15 @@ router.patch('/:id/restore', authenticate, authorize('INSTRUCTOR'), restoreCours
 // POST /api/courses/:courseId/lessons — INSTRUCTOR only (own course)
 router.post('/:courseId/lessons', authenticate, authorize('INSTRUCTOR'), addLesson);
 
+// ── Enrollment & Progress (M04) ─────────────────────────────────────────────
+const {
+  selfEnrollCourse,
+  enrollLearner,
+  getCourseProgress
+} = require('../controllers/enrollmentController');
+
+router.post('/:courseId/self-enroll', authenticate, authorize('LEARNER'), selfEnrollCourse);
+router.post('/:courseId/enroll', authenticate, authorize('INSTRUCTOR'), enrollLearner);
+router.get('/:courseId/progress', authenticate, authorize('LEARNER'), getCourseProgress);
+
 module.exports = router;

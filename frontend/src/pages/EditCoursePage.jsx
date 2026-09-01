@@ -252,7 +252,7 @@ export default function EditCoursePage() {
         </div>
       ))}
 
-      {/* Add lesson form */}
+  // Add lesson form
       <h3 style={{ marginTop: 24 }}>Add Lesson</h3>
       {lessonErr && <p style={{ color: 'red' }}>{lessonErr}</p>}
       {lessonMsg && <p style={{ color: 'green' }}>{lessonMsg}</p>}
@@ -278,6 +278,27 @@ export default function EditCoursePage() {
         <button type="submit" disabled={addingLesson} style={{ padding: '8px 20px' }}>
           {addingLesson ? 'Adding...' : 'Add Lesson'}
         </button>
+      </form>
+
+      {/* Manual Enrollment (M04) */}
+      <h3 style={{ marginTop: 32 }}>Enroll Learner</h3>
+      <form onSubmit={async (e) => {
+        e.preventDefault()
+        const email = e.target.elements.email.value
+        if (!email) return
+        try {
+          const { instructorEnroll } = await import('../services/courseApi')
+          await instructorEnroll(id, email)
+          alert('Learner enrolled successfully')
+          e.target.reset()
+        } catch (err) {
+          alert(err.response?.data?.message || 'Failed to enroll learner')
+        }
+      }}>
+        <div style={{ display: 'flex', gap: 8 }}>
+          <input name="email" type="email" placeholder="Learner Email" required style={{ padding: 8, flex: 1 }} />
+          <button type="submit" style={{ padding: '8px 20px' }}>Enroll</button>
+        </div>
       </form>
     </div>
   )

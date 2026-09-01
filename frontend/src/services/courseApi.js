@@ -33,3 +33,17 @@ export const updateLesson = (lessonId, data) =>
 
 export const deleteLesson = (lessonId) =>
   api.delete(`/lessons/${lessonId}`);
+
+// ── Enrollment & Progress (M04) ─────────────────────────────────────────────
+
+export const selfEnroll = (courseId) =>
+  api.post(`/courses/${courseId}/self-enroll`);
+
+export const instructorEnroll = (courseId, email) =>
+  api.post(`/courses/${courseId}/enroll`, { email });
+
+export const getCourseProgress = (courseId) =>
+  api.get(`/courses/${courseId}/progress`);
+
+export const updateLessonProgress = (lessonId, completed) =>
+  api.patch(`/lessons/${lessonId}/progress`, { completed });

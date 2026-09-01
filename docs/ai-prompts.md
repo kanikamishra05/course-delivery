@@ -64,13 +64,13 @@ Add course and lesson management so instructors can create and manage their cour
 
 Asked the AI agent to read the assignment requirements and existing project files, then implement only the M03 course and lesson management requirements.
 
-The requested scope included course creation and editing, course listing and search, course details, lesson creation and management, course status changes, pagination, and role-based access and ownership checks.
+The requested scope included course creation and editing, course listing and search, course details, lesson creation and management, course status changes, input validation, and role-based access and ownership checks.
 
 ### What I got
 
 The agent implemented the course and lesson management functionality for both the backend and frontend. Instructors can create and manage courses and lessons, change course status, and manage only their own courses. Learners and public users can browse published courses.
 
-The implementation also includes search, category filtering, pagination, lesson ordering, validation, and access control.
+The implementation also includes input validation, lesson ordering, role-based access control, and instructor ownership checks.
 
 ### What I corrected
 
@@ -79,3 +79,37 @@ I reviewed the implementation and verified the M03 functionality through runtime
 The tests covered course creation, course visibility, course updates, publishing, archiving, restoring, lesson management, validation, role authorization, and instructor ownership.
 
 No major changes were required to the implementation.
+
+---
+
+## M04 — Enrollment and Learner Progress
+
+### What I was trying to achieve
+
+Add enrollment functionality for learners and instructors and implement learner progress tracking based on completed lessons.
+
+### Prompt
+
+Asked the AI agent to inspect the existing project implementation and implement the M04 enrollment and learner progress requirements.
+
+The requested scope included learner self-enrollment in published courses, instructor enrollment of learners by email, duplicate enrollment prevention, enrollment restrictions for unpublished courses, instructor ownership and role authorization, learner progress tracking, progress state calculation, lesson completion and un-completion, and enrolled-course filtering.
+
+The implementation was required to preserve the existing functionality and avoid implementing features from later milestones.
+
+### What I got
+
+The agent implemented enrollment and learner progress functionality across the backend and frontend.
+
+Learners can self-enroll in published courses, while instructors can enroll learners in their own courses. Duplicate enrollments are prevented, enrollment in unpublished courses is rejected, and instructor enrollment is protected by role and course ownership checks.
+
+Learner progress is calculated from completed lessons and transitions between `NOT_STARTED`, `IN_PROGRESS`, and `COMPLETED` states. Learners can mark lessons as completed or incomplete, and the progress endpoint is scoped to the authenticated learner.
+
+The implementation also added enrolled-course filtering and a learner's enrolled courses page.
+
+### What I corrected
+
+I reviewed the M04 implementation and performed runtime verification.
+
+The tests covered self-enrollment restrictions, successful learner enrollment, duplicate enrollment handling, instructor enrollment, role and ownership authorization, initial progress, authenticated-user progress scoping, lesson completion, progress state transitions, lesson un-completion, and enrolled-course filtering.
+
+No major changes were required to the M04 implementation.

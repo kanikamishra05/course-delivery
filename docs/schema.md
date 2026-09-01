@@ -4,7 +4,7 @@ This section describes the database collections used in the project, their main 
 
 ---
 
-## Implemented Mongoose collections (M01-M03)
+## Implemented Mongoose collections (M01-M04)
 
 ### User — `backend/models/User.js`
 
@@ -74,14 +74,14 @@ This section describes the database collections used in the project, their main 
 | `learnerId` | ObjectId | Required, ref: `'User'` |
 | `courseId` | ObjectId | Required, ref: `'Course'` |
 | `enrolledAt` | Date | Default: `Date.now` |
-| `lastProgressAt` | Date | Default: `null` — updated on every lesson completion; drives 14-day inactivity rule |
+| `lastProgressAt` | Date | Default: `null` — updated when learner progress changes |
 | `createdAt` | Date | Auto via `{ timestamps: true }` |
 | `updatedAt` | Date | Auto via `{ timestamps: true }` |
 
 **Indexes:**
-- `{ learnerId: 1, courseId: 1 }` — **unique compound index**; prevents duplicate enrollment at the database level.
-- `{ courseId: 1 }` — supports queries by course (bulk enrollment, CSV export, dashboard aggregations).
-- `{ lastProgressAt: 1 }` — supports inactivity alert query (find stale IN_PROGRESS enrollments).
+- `{ learnerId: 1, courseId: 1 }` — **unique compound index**; prevents duplicate enrollment for the same learner and course.
+- `{ courseId: 1 }` — supports queries for enrollments belonging to a course.
+- `{ lastProgressAt: 1 }` — supports queries based on recent learner progress.
 
 ---
 
@@ -100,7 +100,7 @@ This section describes the database collections used in the project, their main 
 - `{ enrollmentId: 1, lessonId: 1 }` — **unique compound index**; prevents recording the same lesson completion twice for the same enrollment.
 - `{ completedAt: -1 }` — supports dashboard 8-week completions chart aggregation.
 
-**Design note:** Progress status (`NOT_STARTED` / `IN_PROGRESS` / `COMPLETED`) is **derived at read-time** — never stored. Derived by counting Progress documents for an enrollment vs total lessons in that course.
+**Design note:** Progress status (`NOT_STARTED` / `IN_PROGRESS` / `COMPLETED`) is **derived at read-time** — never stored. It is calculated using the number of completed lessons compared with the total number of lessons in the course.
 
 ---
 
@@ -172,8 +172,7 @@ The `ACTIVITY_EVENT_TYPES` array is also exported from this module so service co
 - Course state machine transitions — implemented in M03
 - Publishing guard — implemented in M03; a course must have at least one lesson before publishing
 - Course and lesson ownership — implemented in M03; instructors can only modify their own courses and lessons
-- Enrollment rules — planned for later modules
-- Inactivity alert reappearance logic — planned for later modules
+- Enrollment rules — implemented in M04; learners can self-enroll in published courses, instructors can enroll learners in their own courses, and duplicate or unauthorized enrollments are rejected
 - ActivityLog immutability — planned for later modules
 
 **Why the line is drawn here:** MongoDB does not provide traditional relational-style CHECK constraints across multiple documents. Business rules that depend on multiple documents or collections are therefore handled in the application layer.
