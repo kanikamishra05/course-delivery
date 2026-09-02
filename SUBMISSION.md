@@ -43,9 +43,9 @@ Mark each honestly. Partial is fine — say what is partial.
 | 3 | Lessons inside courses | Complete |Instructors can add, edit, delete, and order lessons within their own courses. |
 | 4 | Course and progress states | Complete | Course states (DRAFT, PUBLISHED, ARCHIVED) and state transitions are implemented. Learner progress states (NOT_STARTED, IN_PROGRESS, COMPLETED) are also implemented and calculated from completed lessons. |
 | 5 | Enrollment | Complete | Learners can self-enroll in published courses, while instructors can enroll learners in their own courses. Duplicate enrollments and unauthorized enrollments are prevented. |
-| 6 | Finding courses | Not done | Search, filtering, sorting, and pagination are planned for the next milestone. |
-| 7 | Bulk enrollment + CSV export | Not done | |
-| 8 | Dashboard | Not done | |
+| 6 | Finding courses | Complete | Search, filtering, sorting, and pagination are are implemented and verified. |
+| 7 | Bulk enrollment + CSV export | Complete | Instructors can bulk enroll learners and export enrollment and learner progress data as CSV. |
+| 8 | Dashboard | Complete | An instructor dashboard is implemented with course and learner-related information. |
 | 9 | Immutable activity history | Not done | |
 | 10 | Inactivity alerts | Not done | |
 

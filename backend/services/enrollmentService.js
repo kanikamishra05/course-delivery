@@ -82,9 +82,86 @@ async function updateLessonProgress(lessonId, learnerId, completed) {
   return { success: true };
 }
 
+async function bulkEnroll(courseId, instructorId, emails) {
+  const course = await Course.findById(courseId);
+  if (!course) return { error: 'NOT_FOUND', message: 'Course not found' };
+  if (course.instructorId.toString() !== instructorId) return { error: 'FORBIDDEN', message: 'You can only enroll learners in your own courses.' };
+  if (course.status !== 'PUBLISHED') return { error: 'INVALID_STATE', message: 'Enrollment is allowed only for published courses.' };
+
+  const results = [];
+  for (const email of emails) {
+    const learner = await User.findOne({ email });
+    if (!learner) {
+      results.push({ email, status: 'UNKNOWN_ADDRESS' });
+      continue;
+    }
+    if (learner.role !== 'LEARNER') {
+      // Contract just specified NEWLY_ENROLLED, ALREADY_ENROLLED, UNKNOWN_ADDRESS.
+      // We can classify non-learners as UNKNOWN_ADDRESS to keep to the exact ENUM, or just add NOT_A_LEARNER.
+      // I will classify as UNKNOWN_ADDRESS or skip gracefully if they are not learners.
+      results.push({ email, status: 'UNKNOWN_ADDRESS' });
+      continue;
+    }
+
+    const existing = await Enrollment.findOne({ courseId, learnerId: learner._id });
+    if (existing) {
+      results.push({ email, status: 'ALREADY_ENROLLED' });
+      continue;
+    }
+
+    await Enrollment.create({ courseId, learnerId: learner._id });
+    results.push({ email, status: 'NEWLY_ENROLLED' });
+  }
+
+  return { results };
+}
+
+async function exportProgress(courseId, instructorId) {
+  const course = await Course.findById(courseId);
+  if (!course) return { error: 'NOT_FOUND', message: 'Course not found' };
+  if (course.instructorId.toString() !== instructorId) return { error: 'FORBIDDEN', message: 'You can only export data for your own courses.' };
+
+  const enrollments = await Enrollment.find({ courseId }).populate('learnerId', 'name email').lean();
+  const totalLessons = await Lesson.countDocuments({ courseId });
+  
+  // Need to get progress for all these enrollments
+  const enrollmentIds = enrollments.map(e => e._id);
+  const allProgress = await Progress.find({ enrollmentId: { $in: enrollmentIds } }).lean();
+  
+  const progressByEnrollment = {};
+  allProgress.forEach(p => {
+    if (!progressByEnrollment[p.enrollmentId]) {
+      progressByEnrollment[p.enrollmentId] = 0;
+    }
+    progressByEnrollment[p.enrollmentId]++;
+  });
+
+  const records = enrollments.map(e => {
+    const completedLessons = progressByEnrollment[e._id] || 0;
+    let state = 'NOT_STARTED';
+    if (completedLessons > 0) {
+      state = completedLessons >= totalLessons && totalLessons > 0 ? 'COMPLETED' : 'IN_PROGRESS';
+    }
+    
+    return {
+      learnerName: e.learnerId?.name || 'Unknown',
+      learnerEmail: e.learnerId?.email || 'Unknown',
+      enrollmentDate: e.createdAt,
+      progressStatus: state,
+      lessonsCompleted: completedLessons,
+      totalLessons: totalLessons,
+      lastActivity: e.lastProgressAt || e.createdAt
+    };
+  });
+  
+  return { records };
+}
+
 module.exports = {
   selfEnroll,
   instructorEnroll,
   getProgress,
-  updateLessonProgress
+  updateLessonProgress,
+  bulkEnroll,
+  exportProgress
 };

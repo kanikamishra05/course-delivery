@@ -44,9 +44,14 @@ export default function InstructorCoursesPage() {
     <div style={{ maxWidth: 900, margin: '40px auto', padding: '0 16px' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <h1>My Courses</h1>
-        <Link to="/courses/new">
-          <button style={{ padding: '8px 20px' }}>+ New Course</button>
-        </Link>
+        <div style={{ display: 'flex', gap: 16 }}>
+          <Link to="/dashboard" style={{ alignSelf: 'center', color: '#0066cc', fontWeight: 600, textDecoration: 'none' }}>
+            View Dashboard
+          </Link>
+          <Link to="/courses/new">
+            <button style={{ padding: '8px 20px' }}>+ New Course</button>
+          </Link>
+        </div>
       </div>
 
       {/* Filter bar */}

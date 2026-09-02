@@ -26,8 +26,10 @@ app.use('/api/auth', authRoutes);
 // Course and lesson routes (M03)
 const courseRoutes = require('./routes/courseRoutes');
 const lessonRoutes = require('./routes/lessonRoutes');
+const dashboardRoutes = require('./routes/dashboardRoutes');
 app.use('/api/courses', courseRoutes);
 app.use('/api/lessons', lessonRoutes);
+app.use('/api/dashboard', dashboardRoutes);
 
 // 404 handler for unrecognised routes
 app.use((req, res) => {

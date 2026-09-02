@@ -29,7 +29,8 @@ This section records the main technical decisions made during the development of
 
 - **Why:**-
   
-  Keeping the business logic in a separate service makes the controllers simpler and easier to understand. It also keeps course ownership checks, validation, lesson management, and course status changes in one place, which will make the application easier to extend in later steps.
+  Keeping the business logic in a separate service makes the controllers simpler and easier to understand. It also keeps course ownership checks, validation, lesson management, and course status changes in one place, which makes the application easier to
+  maintain and extend.
   
 
 ## Decision 3

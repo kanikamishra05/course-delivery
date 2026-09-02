@@ -42,6 +42,20 @@ export const selfEnroll = (courseId) =>
 export const instructorEnroll = (courseId, email) =>
   api.post(`/courses/${courseId}/enroll`, { email });
 
+export const bulkEnroll = (courseId, emails) =>
+  api.post(`/courses/${courseId}/bulk-enroll`, { emails });
+
+export const exportCourseCsv = async (courseId) => {
+  const response = await api.get(`/courses/${courseId}/export`, { responseType: 'blob' });
+  const url = window.URL.createObjectURL(new Blob([response.data]));
+  const link = document.createElement('a');
+  link.href = url;
+  link.setAttribute('download', `course_${courseId}_progress.csv`);
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+};
+
 export const getCourseProgress = (courseId) =>
   api.get(`/courses/${courseId}/progress`);
 

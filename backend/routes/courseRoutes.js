@@ -41,11 +41,15 @@ router.post('/:courseId/lessons', authenticate, authorize('INSTRUCTOR'), addLess
 const {
   selfEnrollCourse,
   enrollLearner,
-  getCourseProgress
+  getCourseProgress,
+  bulkEnrollLearners,
+  exportCsv
 } = require('../controllers/enrollmentController');
 
 router.post('/:courseId/self-enroll', authenticate, authorize('LEARNER'), selfEnrollCourse);
 router.post('/:courseId/enroll', authenticate, authorize('INSTRUCTOR'), enrollLearner);
+router.post('/:courseId/bulk-enroll', authenticate, authorize('INSTRUCTOR'), bulkEnrollLearners);
+router.get('/:courseId/export', authenticate, authorize('INSTRUCTOR'), exportCsv);
 router.get('/:courseId/progress', authenticate, authorize('LEARNER'), getCourseProgress);
 
 module.exports = router;

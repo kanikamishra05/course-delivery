@@ -64,7 +64,7 @@ Add course and lesson management so instructors can create and manage their cour
 
 Asked the AI agent to read the assignment requirements and existing project files, then implement only the M03 course and lesson management requirements.
 
-The requested scope included course creation and editing, course listing and search, course details, lesson creation and management, course status changes, input validation, and role-based access and ownership checks.
+The requested scope included course creation and editing, course listing and course details, lesson creation and management, course status changes, input validation, and role-based access and ownership checks.
 
 ### What I got
 
@@ -113,3 +113,35 @@ I reviewed the M04 implementation and performed runtime verification.
 The tests covered self-enrollment restrictions, successful learner enrollment, duplicate enrollment handling, instructor enrollment, role and ownership authorization, initial progress, authenticated-user progress scoping, lesson completion, progress state transitions, lesson un-completion, and enrolled-course filtering.
 
 No major changes were required to the M04 implementation.
+
+---
+
+## M05 — Search, Filtering, Sorting, Pagination, Bulk Operations, CSV Export and Dashboard
+
+### What I was trying to achieve
+
+Complete the course discovery and instructor management features by adding search, filtering, sorting, pagination, bulk enrollment, CSV export, and an instructor dashboard.
+
+### Prompt
+
+Asked the AI agent to inspect the existing project implementation and implement only the M05 requirements.
+
+The requested scope included course search, filtering, sorting, pagination, bulk enrollment of learners, CSV export, and an instructor dashboard. The agent was asked to preserve all previously completed functionality and avoid making changes outside the M05 scope.
+
+### What I got
+
+The agent implemented the M05 functionality across the backend and frontend.
+
+Course discovery now supports search, filtering, sorting, and pagination. Instructors can bulk enroll learners using their email addresses, and the system reports newly enrolled learners, already enrolled learners, and unknown addresses.
+
+The implementation also includes CSV export for enrollment and learner progress data, with access restricted to the instructor who owns the course.
+
+An instructor dashboard was added to provide course and learner-related information. The frontend was also updated with the required controls and navigation for these features.
+
+### What I corrected
+
+I reviewed the M05 implementation and performed runtime verification after the implementation was completed.
+
+The tests covered bulk enrollment with valid and invalid learner addresses, duplicate enrollment handling, instructor ownership restrictions, CSV export with learner progress, dashboard calculations, and the combination of search, filtering, sorting, and pagination.
+
+No major changes were required to the M05 implementation after verification.

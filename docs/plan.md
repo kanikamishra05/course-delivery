@@ -126,3 +126,36 @@ M04 was completed and runtime-verified successfully. Learners can self-enroll in
 
 Learner progress is calculated from completed lessons and correctly transitions between NOT_STARTED, IN_PROGRESS, and COMPLETED states. Lesson completion and un-completion were also verified.
 
+---
+
+## M05 — Search, Filtering, Sorting, Pagination, Bulk Operations, CSV Export and Dashboard
+
+**Scope**
+
+Complete the course discovery and instructor management features by adding search, filtering, sorting, pagination, bulk enrollment, CSV export, and an instructor dashboard.
+
+**What I planned to do**
+
+* Add course search
+
+* Add course filtering
+
+* Add course sorting
+
+* Add pagination for course discovery
+
+* Add bulk enrollment of learners
+
+* Add CSV export for enrollment and learner progress data
+
+* Add instructor dashboard
+
+* Add appropriate authorization and ownership checks
+
+* Verify the M05 functionality
+
+### Result
+
+M05 was completed and runtime-verified successfully. Course discovery now supports search, filtering, sorting, and pagination. Instructors can bulk enroll learners and see the result for newly enrolled, already enrolled, and unknown addresses.
+
+CSV export was added for enrollment and learner progress information, with access restricted to the instructor who owns the course. An instructor dashboard was also added to provide course and learner-related information.

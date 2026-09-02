@@ -4,7 +4,7 @@ This section describes the database collections used in the project, their main 
 
 ---
 
-## Implemented Mongoose collections (M01-M04)
+## Implemented Mongoose collections (M01-M05)
 
 ### User — `backend/models/User.js`
 
@@ -172,7 +172,7 @@ The `ACTIVITY_EVENT_TYPES` array is also exported from this module so service co
 - Course state machine transitions — implemented in M03
 - Publishing guard — implemented in M03; a course must have at least one lesson before publishing
 - Course and lesson ownership — implemented in M03; instructors can only modify their own courses and lessons
-- Enrollment rules — implemented in M04; learners can self-enroll in published courses, instructors can enroll learners in their own courses, and duplicate or unauthorized enrollments are rejected
+- Enrollment rules — implemented in M04/M05; learners can self-enroll in published courses, instructors can enroll learners in their own courses or bulk-enroll learners, and duplicate or unauthorized enrollments are rejected
 - ActivityLog immutability — planned for later modules
 
 **Why the line is drawn here:** MongoDB does not provide traditional relational-style CHECK constraints across multiple documents. Business rules that depend on multiple documents or collections are therefore handled in the application layer.

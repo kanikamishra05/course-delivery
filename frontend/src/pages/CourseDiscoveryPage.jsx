@@ -8,6 +8,8 @@ export default function CourseDiscoveryPage() {
   const [error, setError] = useState('')
   const [q, setQ] = useState('')
   const [category, setCategory] = useState('')
+  const [sort, setSort] = useState('createdAt')
+  const [order, setOrder] = useState('desc')
   const [pagination, setPagination] = useState({ page: 1, totalPages: 1, total: 0 })
 
   useEffect(() => {
@@ -34,6 +36,8 @@ export default function CourseDiscoveryPage() {
     const params = {}
     if (q) params.q = q
     if (category) params.category = category
+    params.sort = sort
+    params.order = order
     fetchCourses(params)
   }
 
@@ -41,6 +45,8 @@ export default function CourseDiscoveryPage() {
     const params = {}
     if (q) params.q = q
     if (category) params.category = category
+    params.sort = sort
+    params.order = order
     params.page = page
     fetchCourses(params)
   }
@@ -49,7 +55,7 @@ export default function CourseDiscoveryPage() {
     <div style={{ maxWidth: 900, margin: '40px auto', padding: '0 16px' }}>
       <h1>Browse Courses</h1>
 
-      <form onSubmit={handleSearch} style={{ display: 'flex', gap: 8, marginBottom: 24, flexWrap: 'wrap' }}>
+      <form onSubmit={handleSearch} style={{ display: 'flex', gap: 8, marginBottom: 24, flexWrap: 'wrap', alignItems: 'center' }}>
         <input
           type="text"
           placeholder="Search courses..."
@@ -64,8 +70,17 @@ export default function CourseDiscoveryPage() {
           onChange={(e) => setCategory(e.target.value)}
           style={{ padding: 8, flex: '1 1 140px' }}
         />
+        <select value={sort} onChange={(e) => setSort(e.target.value)} style={{ padding: 8 }}>
+          <option value="createdAt">Date Added</option>
+          <option value="title">Title</option>
+          <option value="category">Category</option>
+        </select>
+        <select value={order} onChange={(e) => setOrder(e.target.value)} style={{ padding: 8 }}>
+          <option value="desc">Descending</option>
+          <option value="asc">Ascending</option>
+        </select>
         <button type="submit" style={{ padding: '8px 20px' }}>Search</button>
-        <button type="button" style={{ padding: '8px 16px' }} onClick={() => { setQ(''); setCategory(''); fetchCourses() }}>
+        <button type="button" style={{ padding: '8px 16px' }} onClick={() => { setQ(''); setCategory(''); setSort('createdAt'); setOrder('desc'); fetchCourses() }}>
           Clear
         </button>
       </form>

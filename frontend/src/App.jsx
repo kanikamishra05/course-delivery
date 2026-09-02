@@ -10,6 +10,7 @@ import EditCoursePage from './pages/EditCoursePage'
 import CourseDiscoveryPage from './pages/CourseDiscoveryPage'
 import CourseDetailPage from './pages/CourseDetailPage'
 import MyCoursesPage from './pages/MyCoursesPage'
+import DashboardPage from './pages/DashboardPage'
 
 // Redirect authenticated users away from login/register
 function GuestRoute({ children }) {
@@ -29,7 +30,8 @@ function AppRoutes() {
       {/* Home (role-based redirect handled in HomePage) */}
       <Route path="/" element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
 
-      {/* Instructor course management */}
+      {/* Instructor Dashboard & Courses */}
+      <Route path="/dashboard" element={<ProtectedRoute roles={['INSTRUCTOR']}><DashboardPage /></ProtectedRoute>} />
       <Route
         path="/courses"
         element={<ProtectedRoute roles={['INSTRUCTOR']}><InstructorCoursesPage /></ProtectedRoute>}

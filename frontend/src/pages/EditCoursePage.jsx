@@ -280,26 +280,52 @@ export default function EditCoursePage() {
         </button>
       </form>
 
-      {/* Manual Enrollment (M04) */}
-      <h3 style={{ marginTop: 32 }}>Enroll Learner</h3>
+      {/* Bulk Enrollment (M05) */}
+      <h3 style={{ marginTop: 32 }}>Bulk Enroll Learners</h3>
       <form onSubmit={async (e) => {
         e.preventDefault()
-        const email = e.target.elements.email.value
-        if (!email) return
+        const emailsStr = e.target.elements.emails.value
+        if (!emailsStr) return
+        const emails = emailsStr.split(/[\n,]+/).map(e => e.trim()).filter(e => e)
         try {
-          const { instructorEnroll } = await import('../services/courseApi')
-          await instructorEnroll(id, email)
-          alert('Learner enrolled successfully')
+          const { bulkEnroll } = await import('../services/courseApi')
+          const res = await bulkEnroll(id, emails)
+          const results = res.data.data.results
+          let msg = 'Bulk enrollment results:\n'
+          results.forEach(r => msg += `${r.email}: ${r.status}\n`)
+          alert(msg)
           e.target.reset()
         } catch (err) {
-          alert(err.response?.data?.message || 'Failed to enroll learner')
+          alert(err.response?.data?.message || 'Failed to bulk enroll')
         }
       }}>
-        <div style={{ display: 'flex', gap: 8 }}>
-          <input name="email" type="email" placeholder="Learner Email" required style={{ padding: 8, flex: 1 }} />
-          <button type="submit" style={{ padding: '8px 20px' }}>Enroll</button>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          <textarea 
+            name="emails" 
+            placeholder="Enter learner emails (comma or newline separated)" 
+            required 
+            style={{ padding: 8, flex: 1, minHeight: '80px' }} 
+          />
+          <button type="submit" style={{ padding: '8px 20px', alignSelf: 'flex-start' }}>Bulk Enroll</button>
         </div>
       </form>
+
+      {/* CSV Export (M05) */}
+      <h3 style={{ marginTop: 32 }}>Export Course Progress</h3>
+      <button 
+        type="button" 
+        style={{ padding: '8px 20px' }}
+        onClick={async () => {
+          try {
+            const { exportCourseCsv } = await import('../services/courseApi')
+            await exportCourseCsv(id)
+          } catch (err) {
+            alert('Failed to export CSV')
+          }
+        }}
+      >
+        Download CSV
+      </button>
     </div>
   )
 }
