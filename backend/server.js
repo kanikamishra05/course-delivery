@@ -27,9 +27,13 @@ app.use('/api/auth', authRoutes);
 const courseRoutes = require('./routes/courseRoutes');
 const lessonRoutes = require('./routes/lessonRoutes');
 const dashboardRoutes = require('./routes/dashboardRoutes');
+const activityRoutes = require('./routes/activityRoutes');
+const alertRoutes = require('./routes/alertRoutes');
 app.use('/api/courses', courseRoutes);
 app.use('/api/lessons', lessonRoutes);
 app.use('/api/dashboard', dashboardRoutes);
+app.use('/api/activity', activityRoutes);
+app.use('/api/alerts', alertRoutes);
 
 // 404 handler for unrecognised routes
 app.use((req, res) => {

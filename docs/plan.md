@@ -159,3 +159,41 @@ Complete the course discovery and instructor management features by adding searc
 M05 was completed and runtime-verified successfully. Course discovery now supports search, filtering, sorting, and pagination. Instructors can bulk enroll learners and see the result for newly enrolled, already enrolled, and unknown addresses.
 
 CSV export was added for enrollment and learner progress information, with access restricted to the instructor who owns the course. An instructor dashboard was also added to provide course and learner-related information.
+
+---
+
+## M06 — Activity History and Alerts
+
+**Scope**
+
+Add activity history and learner inactivity alerts so course activity can be tracked and instructors can identify learners who have not made progress recently.
+
+**What I planned to do**
+
+* Add activity logging for important course, lesson, enrollment, and progress events
+
+* Add activity history to the course details page
+
+* Allow authorized users to add comments to the activity history
+
+* Keep activity history append-only so existing records cannot be modified or deleted
+
+* Add inactivity alerts for learners who have not made progress for 14 days
+
+* Allow instructors to dismiss inactivity alerts
+
+* Allow dismissed alerts to reappear when the learner becomes inactive again
+
+* Add alerts to the instructor dashboard
+
+* Add appropriate authentication, authorization, and course ownership checks
+
+* Verify the M06 functionality
+
+### Result
+
+M06 was completed and runtime-verified successfully. Activity history now records the main course, lesson, enrollment, and learner progress events. Authorized users can also add comments to the activity history from the course details page.
+
+Inactivity alerts were added for learners who have not made progress for 14 days. Instructors can dismiss these alerts, and the alert can reappear if the learner becomes inactive again after making progress.
+
+The M06 activity and alert endpoints were tested successfully, including comment creation, activity logging, alert retrieval, and alert dismissal. Existing M01–M05 functionality was also regression-tested successfully after the changes.

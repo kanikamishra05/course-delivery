@@ -145,3 +145,41 @@ I reviewed the M05 implementation and performed runtime verification after the i
 The tests covered bulk enrollment with valid and invalid learner addresses, duplicate enrollment handling, instructor ownership restrictions, CSV export with learner progress, dashboard calculations, and the combination of search, filtering, sorting, and pagination.
 
 No major changes were required to the M05 implementation after verification.
+
+---
+
+## M06 — Activity History and Alerts
+
+### What I was trying to achieve
+
+Add activity history and learner inactivity alerts so that important course activity can be tracked and instructors can identify learners who have not made progress recently.
+
+### Prompt
+
+Asked the AI agent to inspect the existing project implementation and implement only the M06 activity history and alerts requirements.
+
+The requested scope included recording important course, lesson, enrollment, and learner progress events, displaying activity history on the course details page, allowing authorized users to add comments, and keeping activity records append-only.
+
+The prompt also included inactivity alerts for learners who had not made progress for 14 days, alert dismissal, alert reappearance when a learner becomes inactive again, and displaying alerts on the instructor dashboard.
+
+The agent was asked to preserve all previously completed functionality and avoid making changes outside the M06 scope.
+
+### What I got
+
+The agent implemented the M06 functionality across the backend and frontend.
+
+Activity logging was added for the main course, lesson, enrollment, and learner progress events. Authorized users can view the activity history and add comments from the course details page.
+
+Inactivity alerts were also added for learners who have not made progress for 14 days. Instructors can dismiss alerts, and dismissed alerts can reappear when the learner becomes inactive again.
+
+The dashboard was updated to display the relevant inactivity alerts, and the activity and alert functionality was protected by the existing authentication, authorization, and course ownership rules.
+
+### What I corrected
+
+I reviewed the M06 implementation and performed runtime verification after the implementation was completed.
+
+The tests covered adding course comments, recording activity events, retrieving alerts, and dismissing alerts. The existing M01–M05 functionality was also regression-tested after the M06 changes.
+
+The frontend production build completed successfully as well.
+
+No major changes were required to the M06 implementation after verification.

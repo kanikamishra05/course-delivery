@@ -21,8 +21,8 @@ Node.js + Express (Backend)
 
 **Moving pieces:**
 
-- **React + Vite frontend** — renders the UI, handles routing (React Router),manages authentication state,provides course discovery, course and lesson management, enrollment, learner progress, enrolled-course,and instructor dashboard pages, and communicates with the backend via Axios over HTTP/JSON. Runs in the browser.
-- **Node.js + Express backend** — REST API server. Currently handles authentication, authorization, validation,course and lesson management,course discovery,enrollment, learner progress tracking,bulk enrollment, CSV export, instructor dashboard data,and database access. Runs on Render (production) or `localhost:5000` (development).
+- **React + Vite frontend** — renders the UI, handles routing (React Router),manages authentication state,provides course discovery, course and lesson management, enrollment, learner progress, enrolled-course,and instructor dashboard pages,activity history, and alert views, and communicates with the backend via Axios over HTTP/JSON. Runs in the browser.
+- **Node.js + Express backend** — REST API server. Currently handles authentication, authorization, validation,course and lesson management,course discovery,enrollment, learner progress tracking,bulk enrollment, CSV export, instructor dashboard data,activity history, comments, inactivity alerts,and database access. Runs on Render (production) or `localhost:5000` (development).
 - **MongoDB database** — stores persistent application data and is accessed through Mongoose. MongoDB Atlas is currently used for development.
 
 **Where each piece runs:**
@@ -53,3 +53,8 @@ Return JWT + user data
     ↓
 React stores JWT and  authentication state
 
+**Activity history and alerts flow:**
+
+Course, lesson, enrollment, and progress actions are recorded as activity events in the backend. Activity history is displayed on the course details page for authorized users.
+
+Learner progress is also used to identify inactivity. When a learner has not made progress for the configured inactivity period, an alert is made available to the instructor through the dashboard. Instructors can dismiss these alerts.

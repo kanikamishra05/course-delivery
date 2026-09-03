@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react'
 import api from '../services/api'
+import { getActiveAlerts, dismissAlert } from '../services/m06Api'
 import { Link } from 'react-router-dom'
 
 export default function DashboardPage() {
   const [metrics, setMetrics] = useState(null)
+  const [alerts, setAlerts] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
@@ -12,6 +14,8 @@ export default function DashboardPage() {
       try {
         const res = await api.get('/dashboard')
         setMetrics(res.data.data)
+        const alertsRes = await getActiveAlerts()
+        setAlerts(alertsRes.data.data.alerts)
       } catch (err) {
         setError(err.response?.data?.message || 'Failed to load dashboard')
       } finally {
@@ -27,6 +31,15 @@ export default function DashboardPage() {
 
   const { headline, breakdown } = metrics
 
+  const handleDismiss = async (enrollmentId) => {
+    try {
+      await dismissAlert(enrollmentId);
+      setAlerts(alerts.filter(a => a.enrollmentId !== enrollmentId));
+    } catch (err) {
+      alert('Failed to dismiss alert');
+    }
+  }
+
   return (
     <div style={{ maxWidth: 900, margin: '40px auto', padding: '0 16px' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -34,6 +47,25 @@ export default function DashboardPage() {
         <Link to="/instructor/courses" style={{ padding: '8px 16px', background: '#e9e9e9', textDecoration: 'none', color: '#333', borderRadius: 4 }}>
           Manage Courses
         </Link>
+      </div>
+
+      
+      <div style={{ marginTop: 40, border: '1px solid #ffc107', borderRadius: 8, padding: 16, background: '#fffbcc' }}>
+        <h2 style={{ margin: '0 0 16px', color: '#856404' }}>Inactivity Alerts ({alerts.length})</h2>
+        {alerts.length > 0 ? (
+          alerts.map(alert => (
+            <div key={alert._id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 0', borderBottom: '1px solid #ffeeba' }}>
+              <div>
+                <strong>{alert.learner?.name || alert.learner?.email || 'Unknown Learner'}</strong> has been inactive in <strong>{alert.course?.title}</strong> for {alert.daysInactive} days.
+              </div>
+              <button onClick={() => handleDismiss(alert.enrollmentId)} style={{ padding: '4px 12px', background: '#ffc107', color: '#000', border: 'none', borderRadius: 4, cursor: 'pointer' }}>
+                Dismiss
+              </button>
+            </div>
+          ))
+        ) : (
+          <p style={{ margin: 0, color: '#856404' }}>No inactivity alerts.</p>
+        )}
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16, marginTop: 24 }}>

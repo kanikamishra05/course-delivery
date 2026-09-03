@@ -3,6 +3,7 @@ const Enrollment = require('../models/Enrollment');
 const Progress = require('../models/Progress');
 const Lesson = require('../models/Lesson');
 const User = require('../models/User');
+const activityService = require('./activityService');
 
 async function selfEnroll(courseId, learnerId) {
   const course = await Course.findById(courseId);
@@ -13,6 +14,7 @@ async function selfEnroll(courseId, learnerId) {
   if (existing) return { error: 'CONFLICT', message: 'Duplicate enrollment is prohibited.' };
 
   const enrollment = await Enrollment.create({ courseId, learnerId });
+  await activityService.logActivity(courseId, learnerId, 'ENROLLMENT_CREATED', { type: 'self' });
   return { enrollment };
 }
 
@@ -30,6 +32,7 @@ async function instructorEnroll(courseId, instructorId, learnerEmail) {
   if (existing) return { error: 'CONFLICT', message: 'Duplicate enrollment is prohibited.' };
 
   const enrollment = await Enrollment.create({ courseId, learnerId: learner._id });
+  await activityService.logActivity(courseId, instructorId, 'ENROLLMENT_CREATED', { type: 'instructor', learnerEmail });
   return { enrollment };
 }
 
@@ -79,6 +82,7 @@ async function updateLessonProgress(lessonId, learnerId, completed) {
     await enrollment.save();
   }
   
+  await activityService.logActivity(lesson.courseId, learnerId, 'PROGRESS_UPDATED', { lessonId, completed });
   return { success: true };
 }
 
@@ -110,6 +114,7 @@ async function bulkEnroll(courseId, instructorId, emails) {
     }
 
     await Enrollment.create({ courseId, learnerId: learner._id });
+    await activityService.logActivity(courseId, instructorId, 'ENROLLMENT_CREATED', { type: 'bulk', learnerEmail: email });
     results.push({ email, status: 'NEWLY_ENROLLED' });
   }
 

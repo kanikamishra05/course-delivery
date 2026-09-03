@@ -1,5 +1,6 @@
 const Course = require('../models/Course');
 const Lesson = require('../models/Lesson');
+const activityService = require('./activityService');
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -32,6 +33,7 @@ function buildCourseQuery(query, userRole, userId) {
 
 async function createCourse(instructorId, { title, description, category }) {
   const course = await Course.create({ title, description, category, instructorId, status: 'DRAFT' });
+  await activityService.logActivity(course._id, instructorId, 'COURSE_CREATED', { title });
   return course;
 }
 
@@ -87,6 +89,7 @@ async function updateCourse(courseId, instructorId, updates) {
   if (updates.category !== undefined) allowed.category = updates.category;
 
   const updated = await Course.findByIdAndUpdate(courseId, allowed, { new: true, runValidators: true });
+  await activityService.logActivity(courseId, instructorId, 'COURSE_UPDATED', { fields: Object.keys(allowed) });
   return { course: updated };
 }
 
@@ -101,6 +104,7 @@ async function publishCourse(courseId, instructorId) {
 
   course.status = 'PUBLISHED';
   await course.save();
+  await activityService.logActivity(courseId, instructorId, 'COURSE_PUBLISHED');
   return { course };
 }
 
@@ -112,6 +116,7 @@ async function archiveCourse(courseId, instructorId) {
 
   course.status = 'ARCHIVED';
   await course.save();
+  await activityService.logActivity(courseId, instructorId, 'COURSE_ARCHIVED');
   return { course };
 }
 
@@ -123,6 +128,7 @@ async function restoreCourse(courseId, instructorId) {
 
   course.status = 'DRAFT';
   await course.save();
+  await activityService.logActivity(courseId, instructorId, 'COURSE_RESTORED');
   return { course };
 }
 
@@ -141,6 +147,7 @@ async function addLesson(courseId, instructorId, { title, content, position }) {
   }
 
   const lesson = await Lesson.create({ courseId, title, content: content || '', position: lessonPosition });
+  await activityService.logActivity(courseId, instructorId, 'LESSON_CREATED', { lessonId: lesson._id, title });
   return { lesson };
 }
 
@@ -158,6 +165,7 @@ async function updateLesson(lessonId, instructorId, updates) {
   if (updates.position !== undefined) allowed.position = updates.position;
 
   const updated = await Lesson.findByIdAndUpdate(lessonId, allowed, { new: true, runValidators: true });
+  await activityService.logActivity(lesson.courseId, instructorId, 'LESSON_UPDATED', { lessonId, fields: Object.keys(allowed) });
   return { lesson: updated };
 }
 
@@ -170,6 +178,7 @@ async function deleteLesson(lessonId, instructorId) {
   if (course.instructorId.toString() !== instructorId) return { error: 'FORBIDDEN' };
 
   await Lesson.findByIdAndDelete(lessonId);
+  await activityService.logActivity(course._id, instructorId, 'LESSON_DELETED', { lessonId, title: lesson.title });
   return { success: true };
 }
 

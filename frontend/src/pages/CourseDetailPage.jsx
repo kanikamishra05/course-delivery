@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { getCourse, getCourseProgress, selfEnroll, updateLessonProgress } from '../services/courseApi'
+import { getCourseActivity, addCourseComment } from '../services/m06Api'
 import { useAuth } from '../context/AuthContext'
 
 export default function CourseDetailPage() {
@@ -16,6 +17,9 @@ export default function CourseDetailPage() {
   const [progress, setProgress] = useState(null)
   const [enrollError, setEnrollError] = useState('')
   const [enrolling, setEnrolling] = useState(false)
+  const [activity, setActivity] = useState([])
+  const [commentText, setCommentText] = useState('')
+  const [canViewActivity, setCanViewActivity] = useState(false)
 
   useEffect(() => {
     loadCourseAndProgress()
@@ -26,7 +30,13 @@ export default function CourseDetailPage() {
     setError('')
     try {
       const res = await getCourse(id)
-      setCourse(res.data.data.course)
+      const courseData = res.data.data.course
+      setCourse(courseData)
+      
+      let isAuthorized = false;
+      if (isAuthenticated && user?.role === 'INSTRUCTOR' && courseData.instructorId === user.id) {
+        isAuthorized = true;
+      }
       
       // If learner, check progress
       if (isAuthenticated && user?.role === 'LEARNER') {
@@ -34,16 +44,41 @@ export default function CourseDetailPage() {
           const progRes = await getCourseProgress(id)
           setEnrolled(true)
           setProgress(progRes.data.data.progress)
+          isAuthorized = true;
         } catch (err) {
           if (err.response?.status === 404) {
             setEnrolled(false) // Not enrolled
           }
         }
       }
+      
+      if (isAuthorized) {
+        setCanViewActivity(true)
+        try {
+          const actRes = await getCourseActivity(id)
+          setActivity(actRes.data.data.activity)
+        } catch(e) { console.error('Failed to fetch activity') }
+      }
+      
     } catch (err) {
       setError(err.response?.data?.message || 'Course not found')
     } finally {
       setLoading(false)
+    }
+  }
+
+  
+  const handleAddComment = async (e) => {
+    e.preventDefault();
+    if (!commentText.trim()) return;
+    try {
+      await addCourseComment(id, commentText);
+      setCommentText('');
+      // Reload activity
+      const actRes = await getCourseActivity(id);
+      setActivity(actRes.data.data.activity);
+    } catch (err) {
+      alert('Failed to add comment');
     }
   }
 
@@ -132,6 +167,48 @@ export default function CourseDetailPage() {
               </div>
             )
           })}
+        </div>
+      )}
+    
+      {canViewActivity && (
+        <div style={{ marginTop: 40, borderTop: '2px solid #eee', paddingTop: 24 }}>
+          <h2>Activity History</h2>
+          
+          <form onSubmit={handleAddComment} style={{ display: 'flex', gap: 8, marginBottom: 24 }}>
+            <input 
+              type="text" 
+              value={commentText}
+              onChange={e => setCommentText(e.target.value)}
+              placeholder="Add a comment..." 
+              style={{ flex: 1, padding: '8px 12px', borderRadius: 4, border: '1px solid #ccc' }}
+            />
+            <button type="submit" style={{ padding: '8px 16px', background: '#0066cc', color: '#fff', border: 'none', borderRadius: 4 }}>Post</button>
+          </form>
+
+          {activity.length === 0 ? (
+            <p>No activity yet.</p>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+              {activity.map(act => (
+                <div key={act._id} style={{ padding: 12, background: '#f9f9f9', borderRadius: 6, borderLeft: '4px solid #0066cc' }}>
+                  <div style={{ fontSize: 12, color: '#666', marginBottom: 4 }}>
+                    <strong>{act.actorId?.name || 'System'}</strong> +" {new Date(act.createdAt).toLocaleString()}
+                  </div>
+                  <div>
+                    <strong>{act.eventType}</strong>
+                    {act.eventType === 'COMMENT' && act.metadata?.text && (
+                      <p style={{ margin: '4px 0 0', fontStyle: 'italic' }}>"{act.metadata.text}"</p>
+                    )}
+                    {act.eventType !== 'COMMENT' && act.metadata && Object.keys(act.metadata).length > 0 && (
+                      <pre style={{ margin: '4px 0 0', fontSize: 11, background: '#eee', padding: 4 }}>
+                        {JSON.stringify(act.metadata)}
+                      </pre>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       )}
     </div>
