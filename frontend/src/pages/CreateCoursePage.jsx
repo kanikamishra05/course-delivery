@@ -3,72 +3,54 @@ import { useNavigate } from 'react-router-dom'
 import { createCourse } from '../services/courseApi'
 
 export default function CreateCoursePage() {
-  const [form, setForm] = useState({ title: '', description: '', category: '' })
+  const [title, setTitle] = useState('')
+  const [description, setDescription] = useState('')
+  const [category, setCategory] = useState('')
   const [error, setError] = useState('')
-  const [submitting, setSubmitting] = useState(false)
+  const [saving, setSaving] = useState(false)
   const navigate = useNavigate()
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
-    if (!form.title || !form.description || !form.category) {
-      setError('All fields are required.')
-      return
-    }
-    setSubmitting(true)
+    setSaving(true)
     try {
-      const res = await createCourse(form)
-      const courseId = res.data.data.course._id
-      navigate(`/courses/${courseId}/edit`)
+      const res = await createCourse({ title, description, category })
+      navigate(`/courses/${res.data.data.course._id}/edit`)
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to create course')
     } finally {
-      setSubmitting(false)
+      setSaving(false)
     }
   }
 
   return (
-    <div style={{ maxWidth: 600, margin: '40px auto', padding: '0 16px' }}>
-      <h1>Create New Course</h1>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: 12 }}>
-          <label htmlFor="title">Title</label><br />
-          <input
-            id="title"
-            type="text"
-            value={form.title}
-            onChange={(e) => setForm({ ...form, title: e.target.value })}
-            style={{ width: '100%', padding: 8 }}
-          />
-        </div>
-        <div style={{ marginBottom: 12 }}>
-          <label htmlFor="description">Description</label><br />
-          <textarea
-            id="description"
-            value={form.description}
-            onChange={(e) => setForm({ ...form, description: e.target.value })}
-            rows={4}
-            style={{ width: '100%', padding: 8 }}
-          />
-        </div>
-        <div style={{ marginBottom: 16 }}>
-          <label htmlFor="category">Category</label><br />
-          <input
-            id="category"
-            type="text"
-            value={form.category}
-            onChange={(e) => setForm({ ...form, category: e.target.value })}
-            style={{ width: '100%', padding: 8 }}
-          />
-        </div>
-        <button type="submit" disabled={submitting} style={{ padding: '8px 24px', marginRight: 8 }}>
-          {submitting ? 'Creating...' : 'Create Course'}
-        </button>
-        <button type="button" onClick={() => navigate('/courses')} style={{ padding: '8px 16px' }}>
-          Cancel
-        </button>
-      </form>
+    <div className="container" style={{ maxWidth: 600 }}>
+      <div className="page-header">
+        <h1>Create New Course</h1>
+        <button onClick={() => navigate('/courses')} className="btn btn-secondary">Cancel</button>
+      </div>
+      
+      <div className="card">
+        {error && <div className="alert-box alert-empty mb-4">{error}</div>}
+        <form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label className="form-label">Title</label>
+            <input className="form-input" required type="text" value={title} onChange={(e) => setTitle(e.target.value)} />
+          </div>
+          <div className="form-group">
+            <label className="form-label">Description</label>
+            <textarea className="form-input" required value={description} onChange={(e) => setDescription(e.target.value)} />
+          </div>
+          <div className="form-group">
+            <label className="form-label">Category</label>
+            <input className="form-input" required type="text" value={category} onChange={(e) => setCategory(e.target.value)} />
+          </div>
+          <button type="submit" disabled={saving} className="btn btn-primary" style={{ width: '100%' }}>
+            {saving ? 'Creating...' : 'Create Course'}
+          </button>
+        </form>
+      </div>
     </div>
   )
 }

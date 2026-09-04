@@ -12,9 +12,7 @@ export default function CourseDiscoveryPage() {
   const [order, setOrder] = useState('desc')
   const [pagination, setPagination] = useState({ page: 1, totalPages: 1, total: 0 })
 
-  useEffect(() => {
-    fetchCourses()
-  }, [])
+  useEffect(() => { fetchCourses() }, [])
 
   const fetchCourses = async (params = {}) => {
     setLoading(true)
@@ -33,89 +31,74 @@ export default function CourseDiscoveryPage() {
 
   const handleSearch = (e) => {
     e.preventDefault()
-    const params = {}
+    const params = { sort, order }
     if (q) params.q = q
     if (category) params.category = category
-    params.sort = sort
-    params.order = order
     fetchCourses(params)
   }
 
   const handlePage = (page) => {
-    const params = {}
+    const params = { sort, order, page }
     if (q) params.q = q
     if (category) params.category = category
-    params.sort = sort
-    params.order = order
-    params.page = page
     fetchCourses(params)
   }
 
   return (
-    <div style={{ maxWidth: 900, margin: '40px auto', padding: '0 16px' }}>
-      <h1>Browse Courses</h1>
+    <div className="container">
+      <div className="page-header">
+        <h1>Discover Courses</h1>
+      </div>
 
-      <form onSubmit={handleSearch} style={{ display: 'flex', gap: 8, marginBottom: 24, flexWrap: 'wrap', alignItems: 'center' }}>
-        <input
-          type="text"
-          placeholder="Search courses..."
-          value={q}
-          onChange={(e) => setQ(e.target.value)}
-          style={{ padding: 8, flex: '1 1 200px' }}
-        />
-        <input
-          type="text"
-          placeholder="Category"
-          value={category}
-          onChange={(e) => setCategory(e.target.value)}
-          style={{ padding: 8, flex: '1 1 140px' }}
-        />
-        <select value={sort} onChange={(e) => setSort(e.target.value)} style={{ padding: 8 }}>
+      <form onSubmit={handleSearch} className="filter-bar">
+        <input className="form-input" style={{ flex: '1 1 200px' }} type="text" placeholder="Search courses..." value={q} onChange={(e) => setQ(e.target.value)} />
+        <input className="form-input" style={{ flex: '1 1 140px' }} type="text" placeholder="Category" value={category} onChange={(e) => setCategory(e.target.value)} />
+        <select className="form-input" style={{ flex: '0 1 150px' }} value={sort} onChange={(e) => setSort(e.target.value)}>
           <option value="createdAt">Date Added</option>
           <option value="title">Title</option>
           <option value="category">Category</option>
         </select>
-        <select value={order} onChange={(e) => setOrder(e.target.value)} style={{ padding: 8 }}>
+        <select className="form-input" style={{ flex: '0 1 120px' }} value={order} onChange={(e) => setOrder(e.target.value)}>
           <option value="desc">Descending</option>
           <option value="asc">Ascending</option>
         </select>
-        <button type="submit" style={{ padding: '8px 20px' }}>Search</button>
-        <button type="button" style={{ padding: '8px 16px' }} onClick={() => { setQ(''); setCategory(''); setSort('createdAt'); setOrder('desc'); fetchCourses() }}>
-          Clear
-        </button>
+        <button type="submit" className="btn btn-secondary">Search</button>
+        <button type="button" className="btn btn-secondary" onClick={() => { setQ(''); setCategory(''); setSort('createdAt'); setOrder('desc'); fetchCourses() }}>Clear</button>
       </form>
 
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+      {error && <div className="alert-box alert-empty mb-4">{error}</div>}
 
       {loading ? (
-        <p>Loading courses...</p>
+        <p className="text-muted">Loading courses...</p>
       ) : courses.length === 0 ? (
-        <p>No courses found.</p>
+        <div className="card text-center" style={{ padding: '3rem 1rem' }}>
+          <h3 className="mb-2">No courses found</h3>
+          <p className="text-muted">Try adjusting your search or filters.</p>
+        </div>
       ) : (
         <>
-          <p style={{ color: '#666' }}>{pagination.total} course{pagination.total !== 1 ? 's' : ''} found</p>
-          <div style={{ display: 'grid', gap: 16, gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))' }}>
+          <p className="text-muted mb-4">{pagination.total} course{pagination.total !== 1 ? 's' : ''} found</p>
+          <div className="metric-grid">
             {courses.map((course) => (
-              <div key={course._id} style={{ border: '1px solid #ddd', borderRadius: 8, padding: 16 }}>
-                <h3 style={{ margin: '0 0 8px' }}>
-                  <Link to={`/courses/${course._id}`}>{course.title}</Link>
-                </h3>
-                <p style={{ color: '#555', fontSize: 14, margin: '0 0 8px' }}>{course.description}</p>
-                <span style={{ fontSize: 13, background: '#e9e9e9', padding: '2px 8px', borderRadius: 4 }}>
-                  {course.category}
-                </span>
+              <div key={course._id} className="card flex flex-col justify-between">
+                <div>
+                  <h3 className="card-title"><Link to={`/courses/${course._id}`}>{course.title}</Link></h3>
+                  <p className="card-meta mb-4 line-clamp-3">{course.description}</p>
+                </div>
+                <div>
+                  <span className="badge badge-info">{course.category}</span>
+                </div>
               </div>
             ))}
           </div>
 
-          {/* Pagination */}
           {pagination.totalPages > 1 && (
-            <div style={{ marginTop: 24, display: 'flex', gap: 8, justifyContent: 'center' }}>
+            <div className="flex justify-center gap-2 mt-6">
               {Array.from({ length: pagination.totalPages }, (_, i) => i + 1).map((p) => (
                 <button
                   key={p}
                   onClick={() => handlePage(p)}
-                  style={{ padding: '4px 12px', fontWeight: p === pagination.page ? 700 : 400 }}
+                  className={`btn btn-sm ${p === pagination.page ? 'btn-primary' : 'btn-secondary'}`}
                 >
                   {p}
                 </button>

@@ -11,6 +11,7 @@ import CourseDiscoveryPage from './pages/CourseDiscoveryPage'
 import CourseDetailPage from './pages/CourseDetailPage'
 import MyCoursesPage from './pages/MyCoursesPage'
 import DashboardPage from './pages/DashboardPage'
+import Navbar from './components/Navbar'
 
 // Redirect authenticated users away from login/register
 function GuestRoute({ children }) {
@@ -61,6 +62,7 @@ function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
+        <Navbar />
         <AppRoutes />
       </AuthProvider>
     </BrowserRouter>

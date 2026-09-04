@@ -1,15 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import {
-  getCourse,
-  updateCourse,
-  publishCourse,
-  archiveCourse,
-  restoreCourse,
-  addLesson,
-  updateLesson,
-  deleteLesson,
-} from '../services/courseApi'
+import { getCourse, updateCourse, addLesson, updateLesson, deleteLesson, publishCourse, archiveCourse, restoreCourse } from '../services/courseApi'
 
 export default function EditCoursePage() {
   const { id } = useParams()
@@ -17,42 +8,33 @@ export default function EditCoursePage() {
 
   const [course, setCourse] = useState(null)
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState('')
-
-  // Course form state
+  
   const [courseForm, setCourseForm] = useState({ title: '', description: '', category: '' })
-  const [courseMsg, setCourseMsg] = useState('')
   const [courseErr, setCourseErr] = useState('')
+  const [courseMsg, setCourseMsg] = useState('')
   const [savingCourse, setSavingCourse] = useState(false)
 
-  // Lesson form state
   const [lessonForm, setLessonForm] = useState({ title: '', content: '' })
-  const [lessonMsg, setLessonMsg] = useState('')
   const [lessonErr, setLessonErr] = useState('')
+  const [lessonMsg, setLessonMsg] = useState('')
   const [addingLesson, setAddingLesson] = useState(false)
 
-  // Inline lesson editing
   const [editingLesson, setEditingLesson] = useState(null)
-  const [editLessonForm, setEditLessonForm] = useState({})
+  const [editLessonForm, setEditLessonForm] = useState({ title: '', content: '', position: 0 })
 
-  // State transitions
   const [transitionErr, setTransitionErr] = useState('')
   const [transitionMsg, setTransitionMsg] = useState('')
 
-  useEffect(() => {
-    loadCourse()
-  }, [id])
+  useEffect(() => { loadCourse() }, [id])
 
   const loadCourse = async () => {
-    setLoading(true)
-    setError('')
     try {
       const res = await getCourse(id)
-      const c = res.data.data.course
-      setCourse(c)
-      setCourseForm({ title: c.title, description: c.description, category: c.category })
+      const data = res.data.data.course
+      setCourse(data)
+      setCourseForm({ title: data.title, description: data.description, category: data.category })
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to load course')
+      setCourseErr('Course not found')
     } finally {
       setLoading(false)
     }
@@ -60,15 +42,13 @@ export default function EditCoursePage() {
 
   const handleUpdateCourse = async (e) => {
     e.preventDefault()
-    setCourseErr('')
-    setCourseMsg('')
-    setSavingCourse(true)
+    setCourseErr(''); setCourseMsg(''); setSavingCourse(true)
     try {
-      const res = await updateCourse(id, courseForm)
-      setCourse((prev) => ({ ...prev, ...res.data.data.course }))
-      setCourseMsg('Course updated successfully.')
+      await updateCourse(id, courseForm)
+      setCourseMsg('Course updated successfully!')
+      await loadCourse()
     } catch (err) {
-      setCourseErr(err.response?.data?.message || 'Failed to update course')
+      setCourseErr(err.response?.data?.message || 'Failed to update')
     } finally {
       setSavingCourse(false)
     }
@@ -76,16 +56,12 @@ export default function EditCoursePage() {
 
   const handleAddLesson = async (e) => {
     e.preventDefault()
-    setLessonErr('')
-    setLessonMsg('')
-    if (!lessonForm.title) { setLessonErr('Lesson title is required.'); return }
-    setAddingLesson(true)
+    setLessonErr(''); setLessonMsg(''); setAddingLesson(true)
     try {
-      const res = await addLesson(id, lessonForm)
-      const newLesson = res.data.data.lesson
-      setCourse((prev) => ({ ...prev, lessons: [...(prev.lessons || []), newLesson] }))
+      await addLesson(id, lessonForm)
+      setLessonMsg('Lesson added!')
       setLessonForm({ title: '', content: '' })
-      setLessonMsg('Lesson added.')
+      await loadCourse()
     } catch (err) {
       setLessonErr(err.response?.data?.message || 'Failed to add lesson')
     } finally {
@@ -95,237 +71,185 @@ export default function EditCoursePage() {
 
   const handleUpdateLesson = async (lessonId) => {
     try {
-      const res = await updateLesson(lessonId, editLessonForm)
-      const updated = res.data.data.lesson
-      setCourse((prev) => ({
-        ...prev,
-        lessons: prev.lessons.map((l) => l._id === lessonId ? updated : l),
-      }))
+      await updateLesson(lessonId, editLessonForm)
       setEditingLesson(null)
+      await loadCourse()
     } catch (err) {
-      alert(err.response?.data?.message || 'Failed to update lesson')
+      alert('Failed to update lesson')
     }
   }
 
   const handleDeleteLesson = async (lessonId) => {
-    if (!window.confirm('Delete this lesson?')) return
+    if (!window.confirm('Are you sure you want to delete this lesson?')) return
     try {
       await deleteLesson(lessonId)
-      setCourse((prev) => ({ ...prev, lessons: prev.lessons.filter((l) => l._id !== lessonId) }))
+      await loadCourse()
     } catch (err) {
-      alert(err.response?.data?.message || 'Failed to delete lesson')
+      alert('Failed to delete lesson')
     }
   }
 
   const handleTransition = async (action) => {
-    setTransitionErr('')
-    setTransitionMsg('')
+    setTransitionErr(''); setTransitionMsg('')
     try {
-      let res
-      if (action === 'publish') res = await publishCourse(id)
-      else if (action === 'archive') res = await archiveCourse(id)
-      else if (action === 'restore') res = await restoreCourse(id)
-      setCourse((prev) => ({ ...prev, status: res.data.data.course.status }))
-      setTransitionMsg(`Course ${action}d successfully.`)
+      if (action === 'publish') await publishCourse(id)
+      if (action === 'archive') await archiveCourse(id)
+      if (action === 'restore') await restoreCourse(id)
+      setTransitionMsg(`Course ${action}ed successfully!`)
+      await loadCourse()
     } catch (err) {
       setTransitionErr(err.response?.data?.message || `Failed to ${action} course`)
     }
   }
 
-  if (loading) return <div style={{ padding: 40 }}>Loading...</div>
-  if (error) return <div style={{ padding: 40, color: 'red' }}>{error}</div>
-  if (!course) return null
+  if (loading) return <div className="container">Loading...</div>
+  if (!course) return <div className="container text-danger">Course not found</div>
 
   const { status } = course
   const lessons = course.lessons || []
 
   return (
-    <div style={{ maxWidth: 800, margin: '40px auto', padding: '0 16px' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+    <div className="container" style={{ maxWidth: 800 }}>
+      <div className="page-header">
         <h1>Edit Course</h1>
-        <button onClick={() => navigate('/courses')} style={{ padding: '6px 16px' }}>← Back</button>
+        <button onClick={() => navigate('/courses')} className="btn btn-secondary">Back to Courses</button>
       </div>
 
-      {/* Status + transitions */}
-      <div style={{ marginBottom: 24, padding: 16, background: '#f8f8f8', borderRadius: 6 }}>
-        <strong>Status: </strong>
-        <span style={{ marginLeft: 8, fontWeight: 700 }}>{status}</span>
-        <span style={{ marginLeft: 24 }}>
-          {status === 'DRAFT' && (
-            <button onClick={() => handleTransition('publish')} style={{ marginRight: 8, padding: '4px 14px' }}>
-              Publish
-            </button>
-          )}
-          {status === 'PUBLISHED' && (
-            <button onClick={() => handleTransition('archive')} style={{ marginRight: 8, padding: '4px 14px' }}>
-              Archive
-            </button>
-          )}
-          {status === 'ARCHIVED' && (
-            <button onClick={() => handleTransition('restore')} style={{ marginRight: 8, padding: '4px 14px' }}>
-              Restore to Draft
-            </button>
-          )}
-        </span>
-        {transitionErr && <p style={{ color: 'red', margin: '8px 0 0' }}>{transitionErr}</p>}
-        {transitionMsg && <p style={{ color: 'green', margin: '8px 0 0' }}>{transitionMsg}</p>}
+      <div className="card mb-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <strong>Status: </strong>
+            <span className={`badge ${status === 'PUBLISHED' ? 'badge-success' : status === 'ARCHIVED' ? 'badge-danger' : 'badge-warning'}`} style={{ marginLeft: 8 }}>
+              {status}
+            </span>
+          </div>
+          <div className="flex gap-2">
+            {status === 'DRAFT' && <button onClick={() => handleTransition('publish')} className="btn btn-primary">Publish</button>}
+            {status === 'PUBLISHED' && <button onClick={() => handleTransition('archive')} className="btn btn-danger">Archive</button>}
+            {status === 'ARCHIVED' && <button onClick={() => handleTransition('restore')} className="btn btn-secondary">Restore to Draft</button>}
+          </div>
+        </div>
+        {transitionErr && <p className="text-danger mt-4 mb-0">{transitionErr}</p>}
+        {transitionMsg && <p className="text-success mt-4 mb-0">{transitionMsg}</p>}
       </div>
 
-      {/* Course details form */}
-      <h2>Course Details</h2>
-      {courseErr && <p style={{ color: 'red' }}>{courseErr}</p>}
-      {courseMsg && <p style={{ color: 'green' }}>{courseMsg}</p>}
-      <form onSubmit={handleUpdateCourse} style={{ marginBottom: 32 }}>
-        <div style={{ marginBottom: 12 }}>
-          <label>Title</label><br />
-          <input
-            type="text"
-            value={courseForm.title}
-            onChange={(e) => setCourseForm({ ...courseForm, title: e.target.value })}
-            style={{ width: '100%', padding: 8 }}
-          />
-        </div>
-        <div style={{ marginBottom: 12 }}>
-          <label>Description</label><br />
-          <textarea
-            value={courseForm.description}
-            onChange={(e) => setCourseForm({ ...courseForm, description: e.target.value })}
-            rows={3}
-            style={{ width: '100%', padding: 8 }}
-          />
-        </div>
-        <div style={{ marginBottom: 12 }}>
-          <label>Category</label><br />
-          <input
-            type="text"
-            value={courseForm.category}
-            onChange={(e) => setCourseForm({ ...courseForm, category: e.target.value })}
-            style={{ width: '100%', padding: 8 }}
-          />
-        </div>
-        <button type="submit" disabled={savingCourse} style={{ padding: '8px 20px' }}>
-          {savingCourse ? 'Saving...' : 'Save Changes'}
-        </button>
-      </form>
+      <div className="card mb-6">
+        <h2 className="mb-4">Course Details</h2>
+        {courseErr && <p className="text-danger">{courseErr}</p>}
+        {courseMsg && <p className="text-success">{courseMsg}</p>}
+        <form onSubmit={handleUpdateCourse}>
+          <div className="form-group">
+            <label className="form-label">Title</label>
+            <input className="form-input" type="text" value={courseForm.title} onChange={(e) => setCourseForm({ ...courseForm, title: e.target.value })} />
+          </div>
+          <div className="form-group">
+            <label className="form-label">Description</label>
+            <textarea className="form-input" value={courseForm.description} onChange={(e) => setCourseForm({ ...courseForm, description: e.target.value })} rows={3} />
+          </div>
+          <div className="form-group">
+            <label className="form-label">Category</label>
+            <input className="form-input" type="text" value={courseForm.category} onChange={(e) => setCourseForm({ ...courseForm, category: e.target.value })} />
+          </div>
+          <button type="submit" disabled={savingCourse} className="btn btn-primary">
+            {savingCourse ? 'Saving...' : 'Save Changes'}
+          </button>
+        </form>
+      </div>
 
-      {/* Lessons */}
-      <h2>Lessons ({lessons.length})</h2>
-      {lessons.length === 0 && <p style={{ color: '#888' }}>No lessons yet. Add one below.</p>}
-      {lessons.map((lesson, idx) => (
-        <div key={lesson._id} style={{ padding: 12, border: '1px solid #ddd', borderRadius: 6, marginBottom: 8 }}>
-          {editingLesson === lesson._id ? (
-            <>
-              <input
-                type="text"
-                value={editLessonForm.title}
-                onChange={(e) => setEditLessonForm({ ...editLessonForm, title: e.target.value })}
-                style={{ width: '100%', padding: 6, marginBottom: 6 }}
-              />
-              <textarea
-                value={editLessonForm.content}
-                onChange={(e) => setEditLessonForm({ ...editLessonForm, content: e.target.value })}
-                rows={3}
-                style={{ width: '100%', padding: 6, marginBottom: 6 }}
-              />
-              <button onClick={() => handleUpdateLesson(lesson._id)} style={{ marginRight: 8, padding: '4px 12px' }}>Save</button>
-              <button onClick={() => setEditingLesson(null)} style={{ padding: '4px 12px' }}>Cancel</button>
-            </>
-          ) : (
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-              <div>
-                <strong>{idx + 1}. {lesson.title}</strong>
-                {lesson.content && <p style={{ margin: '4px 0 0', color: '#555', fontSize: 14 }}>{lesson.content}</p>}
-              </div>
-              <div style={{ display: 'flex', gap: 8 }}>
-                <button
-                  onClick={() => { setEditingLesson(lesson._id); setEditLessonForm({ title: lesson.title, content: lesson.content, position: lesson.position }) }}
-                  style={{ padding: '4px 12px' }}
-                >
-                  Edit
-                </button>
-                <button onClick={() => handleDeleteLesson(lesson._id)} style={{ padding: '4px 12px', color: 'red' }}>
-                  Delete
-                </button>
-              </div>
+      <div className="card mb-6">
+        <h2 className="mb-4">Lessons ({lessons.length})</h2>
+        {lessons.length === 0 && <p className="text-muted">No lessons yet. Add one below.</p>}
+        
+        <div className="activity-feed mb-6">
+          {lessons.map((lesson, idx) => (
+            <div key={lesson._id} className="activity-item" style={{ borderLeftColor: 'var(--border)' }}>
+              {editingLesson === lesson._id ? (
+                <>
+                  <input className="form-input mb-2" type="text" value={editLessonForm.title} onChange={(e) => setEditLessonForm({ ...editLessonForm, title: e.target.value })} />
+                  <textarea className="form-input mb-2" value={editLessonForm.content} onChange={(e) => setEditLessonForm({ ...editLessonForm, content: e.target.value })} rows={2} />
+                  <div className="flex gap-2">
+                    <button onClick={() => handleUpdateLesson(lesson._id)} className="btn btn-primary btn-sm">Save</button>
+                    <button onClick={() => setEditingLesson(null)} className="btn btn-secondary btn-sm">Cancel</button>
+                  </div>
+                </>
+              ) : (
+                <div className="flex justify-between items-start gap-4">
+                  <div>
+                    <strong>{idx + 1}. {lesson.title}</strong>
+                    {lesson.content && <p className="text-muted mb-0 mt-1" style={{ fontSize: '0.875rem' }}>{lesson.content}</p>}
+                  </div>
+                  <div className="flex gap-2 shrink-0">
+                    <button onClick={() => { setEditingLesson(lesson._id); setEditLessonForm({ title: lesson.title, content: lesson.content, position: lesson.position }) }} className="btn btn-secondary btn-sm">Edit</button>
+                    <button onClick={() => handleDeleteLesson(lesson._id)} className="btn btn-danger btn-sm">Delete</button>
+                  </div>
+                </div>
+              )}
             </div>
-          )}
+          ))}
         </div>
-      ))}
 
-  // Add lesson form
-      <h3 style={{ marginTop: 24 }}>Add Lesson</h3>
-      {lessonErr && <p style={{ color: 'red' }}>{lessonErr}</p>}
-      {lessonMsg && <p style={{ color: 'green' }}>{lessonMsg}</p>}
-      <form onSubmit={handleAddLesson}>
-        <div style={{ marginBottom: 10 }}>
-          <label>Lesson Title</label><br />
-          <input
-            type="text"
-            value={lessonForm.title}
-            onChange={(e) => setLessonForm({ ...lessonForm, title: e.target.value })}
-            style={{ width: '100%', padding: 8 }}
-          />
+        <div style={{ borderTop: '1px solid var(--border)', paddingTop: '1.5rem' }}>
+          <h3 className="mb-4">Add Lesson</h3>
+          {lessonErr && <p className="text-danger">{lessonErr}</p>}
+          {lessonMsg && <p className="text-success">{lessonMsg}</p>}
+          <form onSubmit={handleAddLesson}>
+            <div className="form-group">
+              <label className="form-label">Lesson Title</label>
+              <input className="form-input" required type="text" value={lessonForm.title} onChange={(e) => setLessonForm({ ...lessonForm, title: e.target.value })} />
+            </div>
+            <div className="form-group">
+              <label className="form-label">Content (optional)</label>
+              <textarea className="form-input" value={lessonForm.content} onChange={(e) => setLessonForm({ ...lessonForm, content: e.target.value })} rows={2} />
+            </div>
+            <button type="submit" disabled={addingLesson} className="btn btn-secondary">
+              {addingLesson ? 'Adding...' : 'Add Lesson'}
+            </button>
+          </form>
         </div>
-        <div style={{ marginBottom: 10 }}>
-          <label>Content (optional)</label><br />
-          <textarea
-            value={lessonForm.content}
-            onChange={(e) => setLessonForm({ ...lessonForm, content: e.target.value })}
-            rows={3}
-            style={{ width: '100%', padding: 8 }}
-          />
-        </div>
-        <button type="submit" disabled={addingLesson} style={{ padding: '8px 20px' }}>
-          {addingLesson ? 'Adding...' : 'Add Lesson'}
-        </button>
-      </form>
+      </div>
 
-      {/* Bulk Enrollment (M05) */}
-      <h3 style={{ marginTop: 32 }}>Bulk Enroll Learners</h3>
-      <form onSubmit={async (e) => {
-        e.preventDefault()
-        const emailsStr = e.target.elements.emails.value
-        if (!emailsStr) return
-        const emails = emailsStr.split(/[\n,]+/).map(e => e.trim()).filter(e => e)
-        try {
-          const { bulkEnroll } = await import('../services/courseApi')
-          const res = await bulkEnroll(id, emails)
-          const results = res.data.data.results
-          let msg = 'Bulk enrollment results:\n'
-          results.forEach(r => msg += `${r.email}: ${r.status}\n`)
-          alert(msg)
-          e.target.reset()
-        } catch (err) {
-          alert(err.response?.data?.message || 'Failed to bulk enroll')
-        }
-      }}>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-          <textarea 
-            name="emails" 
-            placeholder="Enter learner emails (comma or newline separated)" 
-            required 
-            style={{ padding: 8, flex: 1, minHeight: '80px' }} 
-          />
-          <button type="submit" style={{ padding: '8px 20px', alignSelf: 'flex-start' }}>Bulk Enroll</button>
+      <div className="metric-grid mb-6">
+        <div className="card">
+          <h3 className="mb-4">Bulk Enroll Learners</h3>
+          <form onSubmit={async (e) => {
+            e.preventDefault()
+            const emailsStr = e.target.elements.emails.value
+            if (!emailsStr) return
+            const emails = emailsStr.split(/[\n,]+/).map(e => e.trim()).filter(e => e)
+            try {
+              const { bulkEnroll } = await import('../services/courseApi')
+              const res = await bulkEnroll(id, emails)
+              const results = res.data.data.results
+              let msg = 'Bulk enrollment results:\n'
+              results.forEach(r => msg += `${r.email}: ${r.status}\n`)
+              alert(msg)
+              e.target.reset()
+            } catch (err) {
+              alert(err.response?.data?.message || 'Failed to bulk enroll')
+            }
+          }}>
+            <div className="form-group mb-2">
+              <textarea name="emails" className="form-input" placeholder="Enter emails (comma or newline separated)" required rows={3} />
+            </div>
+            <button type="submit" className="btn btn-secondary">Bulk Enroll</button>
+          </form>
         </div>
-      </form>
 
-      {/* CSV Export (M05) */}
-      <h3 style={{ marginTop: 32 }}>Export Course Progress</h3>
-      <button 
-        type="button" 
-        style={{ padding: '8px 20px' }}
-        onClick={async () => {
-          try {
-            const { exportCourseCsv } = await import('../services/courseApi')
-            await exportCourseCsv(id)
-          } catch (err) {
-            alert('Failed to export CSV')
-          }
-        }}
-      >
-        Download CSV
-      </button>
+        <div className="card">
+          <h3 className="mb-4">Export Progress</h3>
+          <p className="text-muted mb-4" style={{ fontSize: '0.875rem' }}>Download a CSV report of learner progress for this course.</p>
+          <button type="button" className="btn btn-secondary" onClick={async () => {
+            try {
+              const { exportCourseCsv } = await import('../services/courseApi')
+              await exportCourseCsv(id)
+            } catch (err) {
+              alert('Failed to export CSV')
+            }
+          }}>
+            Download CSV
+          </button>
+        </div>
+      </div>
     </div>
   )
 }

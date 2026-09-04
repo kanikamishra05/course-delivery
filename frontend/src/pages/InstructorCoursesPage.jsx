@@ -3,9 +3,9 @@ import { Link } from 'react-router-dom'
 import { getCourses } from '../services/courseApi'
 
 const STATUS_BADGE = {
-  DRAFT: { label: 'Draft', color: '#888' },
-  PUBLISHED: { label: 'Published', color: '#28a745' },
-  ARCHIVED: { label: 'Archived', color: '#dc3545' },
+  DRAFT: { label: 'Draft', className: 'badge badge-warning' },
+  PUBLISHED: { label: 'Published', className: 'badge badge-success' },
+  ARCHIVED: { label: 'Archived', className: 'badge badge-danger' },
 }
 
 export default function InstructorCoursesPage() {
@@ -14,9 +14,7 @@ export default function InstructorCoursesPage() {
   const [error, setError] = useState('')
   const [filter, setFilter] = useState({ status: '', category: '', q: '' })
 
-  useEffect(() => {
-    fetchCourses()
-  }, [])
+  useEffect(() => { fetchCourses() }, [])
 
   const fetchCourses = async (params = {}) => {
     setLoading(true)
@@ -41,87 +39,61 @@ export default function InstructorCoursesPage() {
   }
 
   return (
-    <div style={{ maxWidth: 900, margin: '40px auto', padding: '0 16px' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+    <div className="container">
+      <div className="page-header">
         <h1>My Courses</h1>
-        <div style={{ display: 'flex', gap: 16 }}>
-          <Link to="/dashboard" style={{ alignSelf: 'center', color: '#0066cc', fontWeight: 600, textDecoration: 'none' }}>
-            View Dashboard
-          </Link>
-          <Link to="/courses/new">
-            <button style={{ padding: '8px 20px' }}>+ New Course</button>
-          </Link>
-        </div>
+        <Link to="/courses/new" className="btn btn-primary">+ New Course</Link>
       </div>
 
-      {/* Filter bar */}
-      <form onSubmit={handleFilter} style={{ display: 'flex', gap: 8, margin: '16px 0', flexWrap: 'wrap' }}>
-        <input
-          type="text"
-          placeholder="Search..."
-          value={filter.q}
-          onChange={(e) => setFilter({ ...filter, q: e.target.value })}
-          style={{ padding: 6, flex: '1 1 160px' }}
-        />
-        <select
-          value={filter.status}
-          onChange={(e) => setFilter({ ...filter, status: e.target.value })}
-          style={{ padding: 6 }}
-        >
+      <form className="filter-bar" onSubmit={handleFilter}>
+        <input className="form-input" style={{ flex: '1 1 200px' }} type="text" placeholder="Search courses..." value={filter.q} onChange={(e) => setFilter({ ...filter, q: e.target.value })} />
+        <select className="form-input" style={{ flex: '0 1 150px' }} value={filter.status} onChange={(e) => setFilter({ ...filter, status: e.target.value })}>
           <option value="">All statuses</option>
           <option value="DRAFT">Draft</option>
           <option value="PUBLISHED">Published</option>
           <option value="ARCHIVED">Archived</option>
         </select>
-        <input
-          type="text"
-          placeholder="Category"
-          value={filter.category}
-          onChange={(e) => setFilter({ ...filter, category: e.target.value })}
-          style={{ padding: 6, flex: '1 1 120px' }}
-        />
-        <button type="submit" style={{ padding: '6px 16px' }}>Filter</button>
-        <button type="button" style={{ padding: '6px 16px' }} onClick={() => { setFilter({ status: '', category: '', q: '' }); fetchCourses() }}>
-          Clear
-        </button>
+        <input className="form-input" style={{ flex: '0 1 150px' }} type="text" placeholder="Category" value={filter.category} onChange={(e) => setFilter({ ...filter, category: e.target.value })} />
+        <button type="submit" className="btn btn-secondary">Filter</button>
+        <button type="button" className="btn btn-secondary" onClick={() => { setFilter({ status: '', category: '', q: '' }); fetchCourses() }}>Clear</button>
       </form>
 
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+      {error && <div className="alert-box alert-empty mb-4">{error}</div>}
 
       {loading ? (
-        <p>Loading courses...</p>
+        <p className="text-muted">Loading courses...</p>
       ) : courses.length === 0 ? (
-        <p>No courses found. <Link to="/courses/new">Create your first course.</Link></p>
+        <div className="card text-center" style={{ padding: '3rem 1rem' }}>
+          <h3 className="mb-2">No courses found</h3>
+          <p className="text-muted mb-4">You haven't created any courses matching this criteria.</p>
+          <Link to="/courses/new" className="btn btn-primary">Create your first course</Link>
+        </div>
       ) : (
-        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-          <thead>
-            <tr style={{ borderBottom: '2px solid #ddd', textAlign: 'left' }}>
-              <th style={{ padding: '8px 4px' }}>Title</th>
-              <th style={{ padding: '8px 4px' }}>Category</th>
-              <th style={{ padding: '8px 4px' }}>Status</th>
-              <th style={{ padding: '8px 4px' }}>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {courses.map((course) => {
-              const badge = STATUS_BADGE[course.status] || {}
-              return (
-                <tr key={course._id} style={{ borderBottom: '1px solid #eee' }}>
-                  <td style={{ padding: '8px 4px' }}>
-                    <Link to={`/courses/${course._id}`}>{course.title}</Link>
-                  </td>
-                  <td style={{ padding: '8px 4px' }}>{course.category}</td>
-                  <td style={{ padding: '8px 4px' }}>
-                    <span style={{ color: badge.color, fontWeight: 600 }}>{badge.label}</span>
-                  </td>
-                  <td style={{ padding: '8px 4px' }}>
-                    <Link to={`/courses/${course._id}/edit`}>Edit</Link>
-                  </td>
-                </tr>
-              )
-            })}
-          </tbody>
-        </table>
+        <div className="table-container">
+          <table className="table">
+            <thead>
+              <tr>
+                <th>Title</th>
+                <th>Category</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {courses.map((course) => {
+                const badge = STATUS_BADGE[course.status] || {}
+                return (
+                  <tr key={course._id}>
+                    <td><Link to={`/courses/${course._id}`} style={{ fontWeight: 500 }}>{course.title}</Link></td>
+                    <td>{course.category}</td>
+                    <td><span className={badge.className}>{badge.label}</span></td>
+                    <td><Link to={`/courses/${course._id}/edit`} className="btn btn-secondary btn-sm">Manage</Link></td>
+                  </tr>
+                )
+              })}
+            </tbody>
+          </table>
+        </div>
       )}
     </div>
   )

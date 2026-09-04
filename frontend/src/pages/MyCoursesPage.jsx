@@ -7,9 +7,7 @@ export default function MyCoursesPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
-  useEffect(() => {
-    fetchEnrolledCourses()
-  }, [])
+  useEffect(() => { fetchEnrolledCourses() }, [])
 
   const fetchEnrolledCourses = async () => {
     setLoading(true)
@@ -25,26 +23,32 @@ export default function MyCoursesPage() {
   }
 
   return (
-    <div style={{ maxWidth: 900, margin: '40px auto', padding: '0 16px' }}>
-      <h1>My Enrolled Courses</h1>
+    <div className="container">
+      <div className="page-header">
+        <h1>My Learning</h1>
+      </div>
       
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+      {error && <div className="alert-box alert-empty mb-4">{error}</div>}
 
       {loading ? (
-        <p>Loading your courses...</p>
+        <p className="text-muted">Loading your courses...</p>
       ) : courses.length === 0 ? (
-        <p>You haven't enrolled in any courses yet. <Link to="/discover">Browse courses</Link></p>
+        <div className="card text-center" style={{ padding: '3rem 1rem' }}>
+          <h3 className="mb-2">No courses yet</h3>
+          <p className="text-muted mb-4">You haven't enrolled in any courses yet.</p>
+          <Link to="/discover" className="btn btn-primary">Browse Courses</Link>
+        </div>
       ) : (
-        <div style={{ display: 'grid', gap: 16, gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))' }}>
+        <div className="metric-grid">
           {courses.map((course) => (
-            <div key={course._id} style={{ border: '1px solid #ddd', borderRadius: 8, padding: 16 }}>
-              <h3 style={{ margin: '0 0 8px' }}>
-                <Link to={`/courses/${course._id}`}>{course.title}</Link>
-              </h3>
-              <p style={{ color: '#555', fontSize: 14, margin: '0 0 8px' }}>{course.description}</p>
-              <span style={{ fontSize: 13, background: '#e9e9e9', padding: '2px 8px', borderRadius: 4 }}>
-                {course.category}
-              </span>
+            <div key={course._id} className="card flex flex-col justify-between">
+              <div>
+                <h3 className="card-title"><Link to={`/courses/${course._id}`}>{course.title}</Link></h3>
+                <p className="card-meta mb-4 line-clamp-3">{course.description}</p>
+              </div>
+              <div>
+                <span className="badge badge-info">{course.category}</span>
+              </div>
             </div>
           ))}
         </div>

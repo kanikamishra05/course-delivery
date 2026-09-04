@@ -1,29 +1,28 @@
 import { useState, useEffect } from 'react'
-import { useParams, Link } from 'react-router-dom'
+import { useParams, Link, useNavigate } from 'react-router-dom'
 import { getCourse, getCourseProgress, selfEnroll, updateLessonProgress } from '../services/courseApi'
 import { getCourseActivity, addCourseComment } from '../services/m06Api'
 import { useAuth } from '../context/AuthContext'
 
 export default function CourseDetailPage() {
   const { id } = useParams()
+  const navigate = useNavigate()
   const { user, isAuthenticated } = useAuth()
   
   const [course, setCourse] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   
-  // Enrollment and Progress state
   const [enrolled, setEnrolled] = useState(false)
   const [progress, setProgress] = useState(null)
   const [enrollError, setEnrollError] = useState('')
   const [enrolling, setEnrolling] = useState(false)
+  
   const [activity, setActivity] = useState([])
   const [commentText, setCommentText] = useState('')
   const [canViewActivity, setCanViewActivity] = useState(false)
 
-  useEffect(() => {
-    loadCourseAndProgress()
-  }, [id, isAuthenticated])
+  useEffect(() => { loadCourseAndProgress() }, [id, isAuthenticated])
 
   const loadCourseAndProgress = async () => {
     setLoading(true)
@@ -38,7 +37,6 @@ export default function CourseDetailPage() {
         isAuthorized = true;
       }
       
-      // If learner, check progress
       if (isAuthenticated && user?.role === 'LEARNER') {
         try {
           const progRes = await getCourseProgress(id)
@@ -47,7 +45,7 @@ export default function CourseDetailPage() {
           isAuthorized = true;
         } catch (err) {
           if (err.response?.status === 404) {
-            setEnrolled(false) // Not enrolled
+            setEnrolled(false)
           }
         }
       }
@@ -59,7 +57,6 @@ export default function CourseDetailPage() {
           setActivity(actRes.data.data.activity)
         } catch(e) { console.error('Failed to fetch activity') }
       }
-      
     } catch (err) {
       setError(err.response?.data?.message || 'Course not found')
     } finally {
@@ -67,14 +64,12 @@ export default function CourseDetailPage() {
     }
   }
 
-  
   const handleAddComment = async (e) => {
     e.preventDefault();
     if (!commentText.trim()) return;
     try {
       await addCourseComment(id, commentText);
       setCommentText('');
-      // Reload activity
       const actRes = await getCourseActivity(id);
       setActivity(actRes.data.data.activity);
     } catch (err) {
@@ -98,7 +93,6 @@ export default function CourseDetailPage() {
   const toggleLesson = async (lessonId, currentStatus) => {
     try {
       await updateLessonProgress(lessonId, !currentStatus)
-      // Refresh progress
       const progRes = await getCourseProgress(id)
       setProgress(progRes.data.data.progress)
     } catch (err) {
@@ -106,104 +100,147 @@ export default function CourseDetailPage() {
     }
   }
 
-  if (loading) return <div style={{ padding: 40 }}>Loading...</div>
-  if (error) return <div style={{ padding: 40, color: 'red' }}>{error}</div>
+  const formatEventType = (act) => {
+    if (act.eventType === 'PROGRESS_UPDATED') {
+      return act.metadata?.completed ? 'Lesson Completed' : 'Lesson Marked Incomplete'
+    }
+    const labels = {
+      COURSE_CREATED: 'Course Created',
+      COURSE_UPDATED: 'Course Updated',
+      COURSE_PUBLISHED: 'Course Published',
+      COURSE_ARCHIVED: 'Course Archived',
+      COURSE_RESTORED: 'Course Restored',
+      LESSON_CREATED: 'Lesson Created',
+      LESSON_UPDATED: 'Lesson Updated',
+      LESSON_DELETED: 'Lesson Deleted',
+      ENROLLMENT_CREATED: 'Enrollment Created',
+      COMMENT: 'Comment Added'
+    }
+    return labels[act.eventType] || act.eventType
+  }
+
+  const renderMetadata = (act) => {
+    if (act.eventType === 'COMMENT' && act.metadata?.text) {
+      return <p className="activity-detail italic">"{act.metadata.text}"</p>
+    }
+    if (act.eventType === 'PROGRESS_UPDATED') {
+      return act.metadata?.title ? <p className="activity-detail">{act.metadata.title}</p> : null
+    }
+    
+    if (act.metadata && Object.keys(act.metadata).length > 0) {
+      const parts = []
+      if (act.metadata.title) parts.push(act.metadata.title)
+      if (act.metadata.learnerEmail) parts.push(`Learner: ${act.metadata.learnerEmail}`)
+      if (act.metadata.type) parts.push(`Type: ${act.metadata.type}`)
+      if (act.metadata.fields && act.metadata.fields.length > 0) parts.push(`Fields: ${act.metadata.fields.join(', ')}`)
+      
+      if (parts.length > 0) {
+        return <p className="activity-detail">{parts.join(' | ')}</p>
+      }
+    }
+    return null
+  }
+
+  if (loading) return <div className="container text-muted">Loading course details...</div>
+  if (error) return <div className="container text-danger">{error}</div>
   if (!course) return null
 
   const lessons = course.lessons || []
 
   return (
-    <div style={{ maxWidth: 800, margin: '40px auto', padding: '0 16px' }}>
-      <Link to={user?.role === 'INSTRUCTOR' ? "/courses" : "/discover"}>← Back</Link>
-      <h1 style={{ marginTop: 16 }}>{course.title}</h1>
-      <p style={{ color: '#555' }}>{course.description}</p>
-      <p><strong>Category:</strong> {course.category}</p>
+    <div className="container" style={{ maxWidth: 800 }}>
+      <div className="mb-6">
+        <button onClick={() => navigate(-1)} className="btn btn-secondary btn-sm mb-4">← Back</button>
+        <h1 className="mb-2">{course.title}</h1>
+        <p className="text-muted" style={{ fontSize: '1.125rem' }}>{course.description}</p>
+        <div className="mt-4">
+          <span className="badge badge-info">{course.category}</span>
+        </div>
+      </div>
 
-      {/* Learner Enrollment Section */}
       {isAuthenticated && user?.role === 'LEARNER' && !enrolled && (
-        <div style={{ padding: 16, background: '#f0f8ff', borderRadius: 8, margin: '24px 0' }}>
-          <h3>Ready to learn?</h3>
-          {enrollError && <p style={{ color: 'red' }}>{enrollError}</p>}
-          <button onClick={handleEnroll} disabled={enrolling} style={{ padding: '8px 24px' }}>
+        <div className="card mb-6 flex justify-between items-center bg-blue-50">
+          <div>
+            <h3 className="mb-1">Ready to start learning?</h3>
+            {enrollError && <p className="text-danger mb-0 mt-2">{enrollError}</p>}
+          </div>
+          <button onClick={handleEnroll} disabled={enrolling} className="btn btn-primary">
             {enrolling ? 'Enrolling...' : 'Enroll Now'}
           </button>
         </div>
       )}
 
-      {/* Progress Section */}
       {enrolled && progress && (
-        <div style={{ padding: 16, background: '#f8f9fa', borderRadius: 8, margin: '24px 0' }}>
-          <h3>Your Progress: {progress.percentage}%</h3>
-          <p>State: <strong>{progress.state}</strong> ({progress.completedLessons} / {progress.totalLessons} lessons)</p>
-          <div style={{ width: '100%', background: '#ddd', height: 12, borderRadius: 6, overflow: 'hidden' }}>
-            <div style={{ width: `${progress.percentage}%`, background: '#28a745', height: '100%' }} />
+        <div className="card mb-6">
+          <div className="flex justify-between items-center mb-2">
+            <h3 className="mb-0">Your Progress</h3>
+            <span className="badge badge-success">{progress.percentage}%</span>
+          </div>
+          <p className="text-muted mb-4">State: <strong style={{ color: 'var(--primary)' }}>{progress.state}</strong> ({progress.completedLessons} of {progress.totalLessons} lessons)</p>
+          <div style={{ width: '100%', background: 'var(--border)', height: 8, borderRadius: 4, overflow: 'hidden' }}>
+            <div style={{ width: `${progress.percentage}%`, background: 'var(--success)', height: '100%', transition: 'width 0.3s ease' }} />
           </div>
         </div>
       )}
 
-      <h2>Lessons ({lessons.length})</h2>
-      {lessons.length === 0 ? (
-        <p>No lessons available.</p>
-      ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-          {lessons.map((lesson, idx) => {
-            const isCompleted = progress?.completedLessonIds?.includes(lesson._id)
-            return (
-              <div key={lesson._id} style={{ display: 'flex', alignItems: 'flex-start', padding: 12, border: '1px solid #eee', borderRadius: 6 }}>
-                {enrolled && (
-                  <input
-                    type="checkbox"
-                    checked={isCompleted || false}
-                    onChange={() => toggleLesson(lesson._id, isCompleted)}
-                    style={{ marginTop: 4, marginRight: 12, transform: 'scale(1.2)' }}
-                  />
-                )}
-                <div>
-                  <strong style={{ textDecoration: isCompleted ? 'line-through' : 'none', color: isCompleted ? '#888' : '#000' }}>
-                    {idx + 1}. {lesson.title}
-                  </strong>
-                  {lesson.content && <p style={{ margin: '4px 0 0', color: '#555', fontSize: 14 }}>{lesson.content}</p>}
+      <div className="card mb-6">
+        <h2 className="mb-4">Lessons ({lessons.length})</h2>
+        {lessons.length === 0 ? (
+          <p className="text-muted">No lessons available.</p>
+        ) : (
+          <div className="flex-col gap-4">
+            {lessons.map((lesson, idx) => {
+              const isCompleted = progress?.completedLessonIds?.includes(lesson._id)
+              return (
+                <div key={lesson._id} className="flex items-start gap-4" style={{ padding: '1rem', border: '1px solid var(--border)', borderRadius: 'var(--radius-md)' }}>
+                  {enrolled && (
+                    <input
+                      type="checkbox"
+                      checked={isCompleted || false}
+                      onChange={() => toggleLesson(lesson._id, isCompleted)}
+                      style={{ marginTop: '0.25rem', width: '1.25rem', height: '1.25rem', cursor: 'pointer' }}
+                    />
+                  )}
+                  <div>
+                    <strong style={{ textDecoration: isCompleted ? 'line-through' : 'none', color: isCompleted ? 'var(--text-muted)' : 'var(--primary)', fontSize: '1.05rem' }}>
+                      {idx + 1}. {lesson.title}
+                    </strong>
+                    {lesson.content && <p className="text-muted mb-0 mt-1" style={{ fontSize: '0.875rem' }}>{lesson.content}</p>}
+                  </div>
                 </div>
-              </div>
-            )
-          })}
-        </div>
-      )}
+              )
+            })}
+          </div>
+        )}
+      </div>
     
       {canViewActivity && (
-        <div style={{ marginTop: 40, borderTop: '2px solid #eee', paddingTop: 24 }}>
-          <h2>Activity History</h2>
+        <div className="card">
+          <h2 className="mb-4">Activity History</h2>
           
-          <form onSubmit={handleAddComment} style={{ display: 'flex', gap: 8, marginBottom: 24 }}>
+          <form onSubmit={handleAddComment} className="flex gap-2 mb-6">
             <input 
+              className="form-input"
               type="text" 
               value={commentText}
               onChange={e => setCommentText(e.target.value)}
-              placeholder="Add a comment..." 
-              style={{ flex: 1, padding: '8px 12px', borderRadius: 4, border: '1px solid #ccc' }}
+              placeholder="Add a comment to this course..." 
             />
-            <button type="submit" style={{ padding: '8px 16px', background: '#0066cc', color: '#fff', border: 'none', borderRadius: 4 }}>Post</button>
+            <button type="submit" className="btn btn-primary shrink-0">Post</button>
           </form>
 
           {activity.length === 0 ? (
-            <p>No activity yet.</p>
+            <p className="text-muted">No activity yet.</p>
           ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            <div className="activity-feed">
               {activity.map(act => (
-                <div key={act._id} style={{ padding: 12, background: '#f9f9f9', borderRadius: 6, borderLeft: '4px solid #0066cc' }}>
-                  <div style={{ fontSize: 12, color: '#666', marginBottom: 4 }}>
-                    <strong>{act.actorId?.name || 'System'}</strong> +" {new Date(act.createdAt).toLocaleString()}
+                <div key={act._id} className="activity-item">
+                  <div className="activity-meta">
+                    <strong>{act.actorId?.name || 'System'}</strong> — {new Date(act.createdAt).toLocaleString()}
                   </div>
                   <div>
-                    <strong>{act.eventType}</strong>
-                    {act.eventType === 'COMMENT' && act.metadata?.text && (
-                      <p style={{ margin: '4px 0 0', fontStyle: 'italic' }}>"{act.metadata.text}"</p>
-                    )}
-                    {act.eventType !== 'COMMENT' && act.metadata && Object.keys(act.metadata).length > 0 && (
-                      <pre style={{ margin: '4px 0 0', fontSize: 11, background: '#eee', padding: 4 }}>
-                        {JSON.stringify(act.metadata)}
-                      </pre>
-                    )}
+                    <span className="activity-title">{formatEventType(act)}</span>
+                    {renderMetadata(act)}
                   </div>
                 </div>
               ))}

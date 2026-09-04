@@ -30,7 +30,7 @@ Node.js + Express (Backend)
 | Piece | Development |
 |-------|-------------|
 | Frontend | `localhost:5173` (Vite dev server) |
-| Backend | `localhost:5000` (nodemon) |
+| Backend | `localhost:5000` (Node.js) |
 | Database | MongoDB Atlas |
 
 **Representative request path — "User logs in":**

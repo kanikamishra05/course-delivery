@@ -21,6 +21,7 @@ a period of idle may take 30–60 seconds to respond. This is expected behaviour
 |------|-------|----------|
 | Instructor | shuklasuman224@gmail.com | 1234@59#Di|
 | Learner | kanikarocks11@gmail.com | DemoLearner123!|
+| Learner | mishrakanika59gmail.com | 1234@59#Pa|
 
 ## Stack
 
@@ -39,8 +40,8 @@ Mark each honestly. Partial is fine — say what is partial.
 | # | Goal | Status | Notes |
 |---|------|--------|-------|
 | 1 | Accounts and roles | Complete | Registration, login, JWT authentication, protected routes, role authorization, session persistence, and logout are implemented and verified. |
-| 2 | Courses | Complete |Instructors can create, edit, publish, archive, and restore their own courses. |
-| 3 | Lessons inside courses | Complete |Instructors can add, edit, delete, and order lessons within their own courses. |
+| 2 | Courses | Complete |Instructors can create, edit, publish, archive, and restore their own courses. The application also includes seeded course data for demonstration. |
+| 3 | Lessons inside courses | Complete |Instructors can add, edit, delete, and order lessons within their own courses.Demonstration courses contain multiple lessons covering relevant technical topics. |
 | 4 | Course and progress states | Complete | Course states (DRAFT, PUBLISHED, ARCHIVED) and state transitions are implemented. Learner progress states (NOT_STARTED, IN_PROGRESS, COMPLETED) are also implemented and calculated from completed lessons. |
 | 5 | Enrollment | Complete | Learners can self-enroll in published courses, while instructors can enroll learners in their own courses. Duplicate enrollments and unauthorized enrollments are prevented. |
 | 6 | Finding courses | Complete | Search, filtering, sorting, and pagination are implemented and verified. |

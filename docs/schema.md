@@ -349,6 +349,7 @@ The `ACTIVITY_EVENT_TYPES` array is also exported from this module so service co
 - Course and lesson ownership — implemented in M03; instructors can only modify their own courses and lessons
 - Enrollment rules — implemented in M04/M05; learners can self-enroll in published courses, instructors can enroll learners in their own courses or bulk-enroll learners, and duplicate or unauthorized enrollments are rejected
 - ActivityLog immutability — implemented in M06; activity records are append-only and there are no UPDATE or DELETE API endpoints for activity logs
+- Inactivity alert rules — implemented in M06; alerts are generated based on learner progress inactivity, can be dismissed by authorized instructors, and can become active again when a learner becomes inactive after making progress
 
 **Why the line is drawn here:** MongoDB does not provide traditional relational-style CHECK constraints across multiple documents. Business rules that depend on multiple documents or collections are therefore handled in the application layer.
 

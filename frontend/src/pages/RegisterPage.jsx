@@ -15,92 +15,53 @@ export default function RegisterPage() {
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
-
-    if (!name || !email || !password) {
-      setError('All fields are required.')
-      return
-    }
-    if (password.length < 6) {
-      setError('Password must be at least 6 characters.')
-      return
-    }
+    if (!name || !email || !password) return setError('All fields are required.')
+    if (password.length < 6) return setError('Password must be at least 6 characters.')
 
     setSubmitting(true)
     try {
       await register(name, email, password, role)
       navigate('/')
     } catch (err) {
-      const msg =
-        err.response?.data?.message || 'Registration failed. Please try again.'
-      setError(msg)
+      setError(err.response?.data?.message || 'Registration failed. Please try again.')
     } finally {
       setSubmitting(false)
     }
   }
 
   return (
-    <div style={{ maxWidth: 400, margin: '80px auto', padding: '0 16px' }}>
-      <h1>Register</h1>
-      {error && (
-        <div style={{ color: 'red', marginBottom: 12 }}>{error}</div>
-      )}
-      <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: 12 }}>
-          <label htmlFor="name">Name</label>
-          <br />
-          <input
-            id="name"
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            style={{ width: '100%', padding: 8 }}
-            autoComplete="name"
-          />
-        </div>
-        <div style={{ marginBottom: 12 }}>
-          <label htmlFor="email">Email</label>
-          <br />
-          <input
-            id="email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            style={{ width: '100%', padding: 8 }}
-            autoComplete="email"
-          />
-        </div>
-        <div style={{ marginBottom: 12 }}>
-          <label htmlFor="password">Password</label>
-          <br />
-          <input
-            id="password"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            style={{ width: '100%', padding: 8 }}
-            autoComplete="new-password"
-          />
-        </div>
-        <div style={{ marginBottom: 12 }}>
-          <label htmlFor="role">Role</label>
-          <br />
-          <select
-            id="role"
-            value={role}
-            onChange={(e) => setRole(e.target.value)}
-            style={{ width: '100%', padding: 8 }}
-          >
-            <option value="LEARNER">Learner</option>
-            <option value="INSTRUCTOR">Instructor</option>
-          </select>
-        </div>
-        <button type="submit" disabled={submitting} style={{ padding: '8px 24px' }}>
-          {submitting ? 'Registering...' : 'Register'}
-        </button>
-      </form>
-      <p style={{ marginTop: 16 }}>
-        Already have an account? <Link to="/login">Login</Link>
-      </p>
+    <div className="container" style={{ maxWidth: 480 }}>
+      <div className="card">
+        <h1 className="text-center mb-6">Create Account</h1>
+        {error && <div className="alert-box alert-empty mb-4 text-center">{error}</div>}
+        <form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label className="form-label" htmlFor="name">Full Name</label>
+            <input className="form-input" id="name" type="text" value={name} onChange={(e) => setName(e.target.value)} autoComplete="name" />
+          </div>
+          <div className="form-group">
+            <label className="form-label" htmlFor="email">Email Address</label>
+            <input className="form-input" id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="email" />
+          </div>
+          <div className="form-group">
+            <label className="form-label" htmlFor="password">Password</label>
+            <input className="form-input" id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} autoComplete="new-password" />
+          </div>
+          <div className="form-group">
+            <label className="form-label" htmlFor="role">Role</label>
+            <select className="form-input" id="role" value={role} onChange={(e) => setRole(e.target.value)}>
+              <option value="LEARNER">Learner</option>
+              <option value="INSTRUCTOR">Instructor</option>
+            </select>
+          </div>
+          <button type="submit" disabled={submitting} className="btn btn-primary" style={{ width: '100%' }}>
+            {submitting ? 'Registering...' : 'Create Account'}
+          </button>
+        </form>
+        <p className="text-center mt-6 text-muted">
+          Already have an account? <Link to="/login">Login here</Link>
+        </p>
+      </div>
     </div>
   )
 }

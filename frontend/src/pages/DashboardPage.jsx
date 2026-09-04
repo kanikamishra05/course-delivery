@@ -25,8 +25,8 @@ export default function DashboardPage() {
     fetchDashboard()
   }, [])
 
-  if (loading) return <div style={{ padding: 24 }}>Loading dashboard...</div>
-  if (error) return <div style={{ padding: 24, color: 'red' }}>{error}</div>
+  if (loading) return <div className="container text-muted">Loading dashboard...</div>
+  if (error) return <div className="container text-danger">{error}</div>
   if (!metrics) return null
 
   const { headline, breakdown } = metrics
@@ -41,65 +41,64 @@ export default function DashboardPage() {
   }
 
   return (
-    <div style={{ maxWidth: 900, margin: '40px auto', padding: '0 16px' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+    <div className="container">
+      <div className="page-header">
         <h1>Instructor Dashboard</h1>
-        <Link to="/instructor/courses" style={{ padding: '8px 16px', background: '#e9e9e9', textDecoration: 'none', color: '#333', borderRadius: 4 }}>
-          Manage Courses
-        </Link>
+        <Link to="/courses" className="btn btn-secondary">Manage Courses</Link>
       </div>
-
       
-      <div style={{ marginTop: 40, border: '1px solid #ffc107', borderRadius: 8, padding: 16, background: '#fffbcc' }}>
-        <h2 style={{ margin: '0 0 16px', color: '#856404' }}>Inactivity Alerts ({alerts.length})</h2>
+      <div className="alert-box">
+        <h2>Inactivity Alerts ({alerts.length})</h2>
         {alerts.length > 0 ? (
           alerts.map(alert => (
-            <div key={alert._id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 0', borderBottom: '1px solid #ffeeba' }}>
+            <div key={alert._id} className="alert-item">
               <div>
                 <strong>{alert.learner?.name || alert.learner?.email || 'Unknown Learner'}</strong> has been inactive in <strong>{alert.course?.title}</strong> for {alert.daysInactive} days.
               </div>
-              <button onClick={() => handleDismiss(alert.enrollmentId)} style={{ padding: '4px 12px', background: '#ffc107', color: '#000', border: 'none', borderRadius: 4, cursor: 'pointer' }}>
+              <button onClick={() => handleDismiss(alert.enrollmentId)} className="btn btn-sm" style={{ backgroundColor: '#F59E0B', color: '#fff', border: 'none' }}>
                 Dismiss
               </button>
             </div>
           ))
         ) : (
-          <p style={{ margin: 0, color: '#856404' }}>No inactivity alerts.</p>
+          <p className="alert-empty">No inactivity alerts.</p>
         )}
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16, marginTop: 24 }}>
-        <div style={{ padding: 24, border: '1px solid #ddd', borderRadius: 8, textAlign: 'center' }}>
-          <h2 style={{ margin: 0, fontSize: 36, color: '#0066cc' }}>{headline.publishedCourses}</h2>
-          <p style={{ margin: '8px 0 0', color: '#666' }}>Published Courses</p>
+      <div className="metric-grid">
+        <div className="metric-card">
+          <div className="metric-value">{headline.publishedCourses}</div>
+          <div className="metric-label">Published Courses</div>
         </div>
-        <div style={{ padding: 24, border: '1px solid #ddd', borderRadius: 8, textAlign: 'center' }}>
-          <h2 style={{ margin: 0, fontSize: 36, color: '#0066cc' }}>{headline.totalLearners}</h2>
-          <p style={{ margin: '8px 0 0', color: '#666' }}>Total Learners</p>
+        <div className="metric-card">
+          <div className="metric-value">{headline.totalLearners}</div>
+          <div className="metric-label">Total Learners</div>
         </div>
-        <div style={{ padding: 24, border: '1px solid #ddd', borderRadius: 8, textAlign: 'center' }}>
-          <h2 style={{ margin: 0, fontSize: 36, color: '#0066cc' }}>{headline.completionsThisMonth}</h2>
-          <p style={{ margin: '8px 0 0', color: '#666' }}>Completions This Month</p>
+        <div className="metric-card">
+          <div className="metric-value">{headline.completionsThisMonth}</div>
+          <div className="metric-label">Completions This Month</div>
         </div>
-        <div style={{ padding: 24, border: '1px solid #ddd', borderRadius: 8, textAlign: 'center' }}>
-          <h2 style={{ margin: 0, fontSize: 36, color: '#0066cc' }}>{headline.learnersInProgress}</h2>
-          <p style={{ margin: '8px 0 0', color: '#666' }}>Learners In Progress</p>
+        <div className="metric-card">
+          <div className="metric-value">{headline.learnersInProgress}</div>
+          <div className="metric-label">Learners In Progress</div>
         </div>
       </div>
 
-      <h2 style={{ marginTop: 40 }}>Completions (Last 8 Weeks)</h2>
-      <div style={{ border: '1px solid #ddd', borderRadius: 8, padding: 24, display: 'flex', alignItems: 'flex-end', height: 200, gap: 16 }}>
-        {breakdown.completionsOver8Weeks.map((count, i) => {
-          const max = Math.max(...breakdown.completionsOver8Weeks, 1);
-          const height = (count / max) * 100 + '%';
-          return (
-            <div key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', alignItems: 'center' }}>
-              <span style={{ fontSize: 12, marginBottom: 4, color: '#666' }}>{count}</span>
-              <div style={{ width: '100%', backgroundColor: '#0066cc', height, minHeight: count > 0 ? 4 : 1, borderRadius: '4px 4px 0 0' }} />
-              <span style={{ fontSize: 10, marginTop: 4, color: '#999' }}>Wk {i+1}</span>
-            </div>
-          )
-        })}
+      <div className="card">
+        <h2 className="mb-4">Completions (Last 8 Weeks)</h2>
+        <div style={{ display: 'flex', alignItems: 'flex-end', height: 200, gap: '1rem', padding: '1rem 0' }}>
+          {breakdown.completionsOver8Weeks.map((count, i) => {
+            const max = Math.max(...breakdown.completionsOver8Weeks, 1);
+            const height = (count / max) * 100 + '%';
+            return (
+              <div key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', alignItems: 'center' }}>
+                <span className="text-muted mb-1" style={{ fontSize: '0.75rem' }}>{count}</span>
+                <div style={{ width: '100%', backgroundColor: 'var(--secondary)', height, minHeight: count > 0 ? 4 : 1, borderRadius: '4px 4px 0 0' }} />
+                <span className="text-muted mt-2" style={{ fontSize: '0.625rem', textTransform: 'uppercase' }}>Wk {i+1}</span>
+              </div>
+            )
+          })}
+        </div>
       </div>
     </div>
   )
