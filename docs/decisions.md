@@ -66,7 +66,9 @@ This section records the main technical decisions made during the development of
 
 - **Chose:**-
   
-  Generate inactivity alerts dynamically based on learner progress and the configured inactivity period, while storing dismissal information separately.
+  Determine inactivity alerts dynamically from learner progress and the
+  configured inactivity period, while storing alert dismissal information
+  separately.
 
 - **Rejected:**-
 
@@ -75,3 +77,9 @@ This section records the main technical decisions made during the development of
 - **Why:**-
 
   Inactivity is a changing state rather than a permanent event. Calculating the current inactivity status from learner progress allows alerts to become relevant again when a learner becomes inactive after making progress. Storing dismissal information separately also allows instructors to dismiss an alert without losing the underlying learner progress information.
+
+## Reversed Decisions
+
+No major architectural decisions were reversed during development. Later
+changes were implementation corrections and verification improvements rather
+than changes to the chosen architecture or design.

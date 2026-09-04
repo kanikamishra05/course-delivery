@@ -114,6 +114,14 @@ The tests covered self-enrollment restrictions, successful learner enrollment, d
 
 No major changes were required to the M04 implementation.
 
+After the initial implementation, an additional review identified that
+re-submitting completion for an already completed lesson could still update
+`lastProgressAt` and create a redundant activity event. This was corrected so
+that progress-related side effects occur only when the progress state actually
+changes.
+
+Cross-course progress spoofing was also explicitly tested and rejected.
+
 ---
 
 ## M05 — Search, Filtering, Sorting, Pagination, Bulk Operations, CSV Export and Dashboard
@@ -183,3 +191,8 @@ The tests covered adding course comments, recording activity events, retrieving 
 The frontend production build completed successfully as well.
 
 No major changes were required to the M06 implementation after verification.
+
+The demo seed process was subsequently reviewed for idempotency. The cleanup
+logic was corrected to remove dependent Progress and Alert records when old
+demo enrollments are refreshed, preventing orphaned records when the seed is
+run repeatedly.

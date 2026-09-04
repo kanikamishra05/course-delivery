@@ -16,9 +16,11 @@ The planned order is:
 
 I started with the foundation because the rest of the application depends on having the client, server and database working properly. Authentication comes next so that access rules are in place before building the main application features.
 
-The remaining features will be added step by step as the core functionality is completed.
+The remaining features were added step by step as the core functionality was
+completed.
 
-I will update this plan as the project progresses.
+The planned implementation, testing, deployment, and final verification have
+now been completed.
 
 ---
 
@@ -197,3 +199,38 @@ M06 was completed and runtime-verified successfully. Activity history now record
 Inactivity alerts were added for learners who have not made progress for 14 days. Instructors can dismiss these alerts, and the alert can reappear if the learner becomes inactive again after making progress.
 
 The M06 activity and alert endpoints were tested successfully, including comment creation, activity logging, alert retrieval, and alert dismissal. Existing M01–M05 functionality was also regression-tested successfully after the changes.
+
+---
+
+## M07 — Testing, Deployment and Final Submission
+
+**Scope**
+
+Complete final verification, deploy the application, and prepare the project
+for submission.
+
+**What I planned to do**
+
+- Run final backend and frontend verification
+- Regression-test the completed M01–M06 functionality
+- Verify the demo user accounts and seeded scenarios
+- Verify the production database connection
+- Deploy the backend to Render
+- Deploy the frontend to Vercel
+- Configure the production frontend API URL
+- Test the deployed application
+- Update the final documentation and submission files
+- Prepare the final project for submission
+
+**### Result**
+
+M07 was completed successfully. The application was regression-tested after
+the final implementation corrections and the demo seed data was verified for
+the required learner progress and inactivity-alert scenarios.
+
+The backend was deployed to Render and the frontend was deployed to Vercel.
+The production frontend was configured to communicate with the deployed
+backend, and the application was tested through the deployed environment.
+
+The final documentation and submission files were reviewed and updated before
+final submission.

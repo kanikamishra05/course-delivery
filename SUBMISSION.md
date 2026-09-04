@@ -5,7 +5,7 @@ This file gives a quick overview of the project, its current progress, and the i
 ## Links
 
 - **GitHub repository:** -> https://github.com/kanikamishra05/course-delivery
-- **Live application:** <deployed URL — to be added after deployment (M07)>
+- **Live application:** -> https://course-delivery.vercel.app
 
 ## Notes for the reviewer
 
@@ -42,7 +42,7 @@ Mark each honestly. Partial is fine — say what is partial.
 | 1 | Accounts and roles | Complete | Registration, login, JWT authentication, protected routes, role authorization, session persistence, and logout are implemented and verified. |
 | 2 | Courses | Complete |Instructors can create, edit, publish, archive, and restore their own courses. The application also includes seeded course data for demonstration. |
 | 3 | Lessons inside courses | Complete |Instructors can add, edit, delete, and order lessons within their own courses.Demonstration courses contain multiple lessons covering relevant technical topics. |
-| 4 | Course and progress states | Complete | Course states (DRAFT, PUBLISHED, ARCHIVED) and state transitions are implemented. Learner progress states (NOT_STARTED, IN_PROGRESS, COMPLETED) are also implemented and calculated from completed lessons. |
+| 4 | Course and progress states | Complete | Course states (DRAFT, PUBLISHED, ARCHIVED) and state transitions are implemented. Learner progress states (NOT_STARTED, IN_PROGRESS, COMPLETED) are derived at read-time from completed lessons rather than stored separately |
 | 5 | Enrollment | Complete | Learners can self-enroll in published courses, while instructors can enroll learners in their own courses. Duplicate enrollments and unauthorized enrollments are prevented. |
 | 6 | Finding courses | Complete | Search, filtering, sorting, and pagination are implemented and verified. |
 | 7 | Bulk enrollment + CSV export | Complete | Instructors can bulk enroll learners and export enrollment and learner progress data as CSV. |
@@ -52,12 +52,14 @@ Mark each honestly. Partial is fine — say what is partial.
 
 ## How much time did you actually spend?
 
-<to be filled after project completion>
+Approximately 16 hours, including implementation, debugging, runtime verification, documentation, local testing, and deployment of the application.
 
 ## What would you do next, with another 12 hours?
 
-<to be filled after project completion>
+With another 12 hours, I would implement quizzes with automatic scoring as an optional extension from the assignment. Quizzes could be attached to lessons or courses, with learners receiving an immediate score after submission.
+
+I would also use the remaining time to add more automated tests and improve edge-case coverage for the existing APIs.
 
 ## What are you least happy with in this codebase, and why?
 
-<to be filled after project completion>
+The main area I would improve is the automated test coverage and some of the larger service functions. The current implementation is functional and verified through runtime testing, but some business logic could be split into smaller reusable functions and supported by more automated tests to make future changes safer and easier to maintain.
