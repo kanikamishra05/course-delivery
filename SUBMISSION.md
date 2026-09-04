@@ -21,7 +21,7 @@ a period of idle may take 30–60 seconds to respond. This is expected behaviour
 |------|-------|----------|
 | Instructor | shuklasuman224@gmail.com | 1234@59#Di|
 | Learner | kanikarocks11@gmail.com | DemoLearner123!|
-| Learner | mishrakanika59gmail.com | 1234@59#Pa|
+| Learner | mishrakanika59@gmail.com | 1234@59#Pa|
 
 ## Stack
 

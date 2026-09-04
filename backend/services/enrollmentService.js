@@ -68,21 +68,26 @@ async function updateLessonProgress(lessonId, learnerId, completed) {
   const enrollment = await Enrollment.findOne({ courseId: lesson.courseId, learnerId });
   if (!enrollment) return { error: 'FORBIDDEN', message: 'Must be enrolled to update progress' };
 
+  let changed = false;
+
   if (completed) {
-    await Progress.updateOne(
+    const result = await Progress.updateOne(
       { enrollmentId: enrollment._id, lessonId: lesson._id },
       { $setOnInsert: { enrollmentId: enrollment._id, lessonId: lesson._id, completedAt: new Date() } },
       { upsert: true }
     );
-    enrollment.lastProgressAt = new Date();
-    await enrollment.save();
+    if (result.upsertedCount > 0) changed = true;
   } else {
-    await Progress.deleteOne({ enrollmentId: enrollment._id, lessonId: lesson._id });
-    enrollment.lastProgressAt = new Date();
-    await enrollment.save();
+    const result = await Progress.deleteOne({ enrollmentId: enrollment._id, lessonId: lesson._id });
+    if (result.deletedCount > 0) changed = true;
   }
   
-  await activityService.logActivity(lesson.courseId, learnerId, 'PROGRESS_UPDATED', { lessonId, completed });
+  if (changed) {
+    enrollment.lastProgressAt = new Date();
+    await enrollment.save();
+    await activityService.logActivity(lesson.courseId, learnerId, 'PROGRESS_UPDATED', { lessonId, completed });
+  }
+  
   return { success: true };
 }
 
