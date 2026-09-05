@@ -35,14 +35,13 @@ export default function Navbar() {
                 <Link to="/my-courses">My Learning</Link>
               </>
             )}
-            <button onClick={handleLogout} className="btn btn-secondary btn-sm" style={{ marginLeft: '1rem' }}>
+            <button onClick={handleLogout} className="btn btn-secondary" style={{ marginLeft: '1rem', fontSize: '1rem', padding: '0.5rem 1rem' }}>
               Logout
             </button>
           </>
         ) : (
           <>
-            <Link to="/login">Login</Link>
-            <Link to="/register" className="btn btn-primary btn-sm">Register</Link>
+            <Link to="/login" className="btn btn-secondary" style={{ backgroundColor: 'transparent', border: 'none', fontWeight: 600, color: 'var(--text)', fontSize: '1rem', padding: '0.5rem 1rem' }}>Login / Register</Link>
           </>
         )}
       </div>

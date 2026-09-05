@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import api from '../services/api'
 import { getActiveAlerts, dismissAlert } from '../services/m06Api'
 import { Link } from 'react-router-dom'
+import { getCategoryStyle } from '../utils/courseIcons'
 
 export default function DashboardPage() {
   const [metrics, setMetrics] = useState(null)
@@ -56,16 +57,27 @@ export default function DashboardPage() {
           Inactivity Alerts ({alerts.length})
         </h2>
         {alerts.length > 0 ? (
-          alerts.map(alert => (
-            <div key={alert._id} className="alert-item">
-              <div>
-                <strong>{alert.learner?.name || alert.learner?.email || 'Unknown Learner'}</strong> has been inactive in <strong>{alert.course?.title}</strong> for {alert.daysInactive} days.
+          alerts.map(alert => {
+            const courseTitle = alert.course?.title || 'Unknown Course'
+            const styleConfig = getCategoryStyle(alert.course?.category || courseTitle)
+            return (
+              <div key={alert._id} className="alert-item">
+                <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '4px' }}>
+                  <strong>{alert.learner?.name || alert.learner?.email || 'Unknown Learner'}</strong> has been inactive in 
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', margin: '0 2px' }}>
+                    <span style={{ color: styleConfig.color, display: 'flex', alignItems: 'center', transform: 'scale(0.75)' }}>
+                      {styleConfig.icon}
+                    </span>
+                    <strong>{courseTitle}</strong>
+                  </span>
+                  for {alert.daysInactive} days.
+                </div>
+                <button onClick={() => handleDismiss(alert.enrollmentId)} className="btn btn-sm" style={{ backgroundColor: '#F59E0B', color: '#fff', border: 'none' }}>
+                  Dismiss
+                </button>
               </div>
-              <button onClick={() => handleDismiss(alert.enrollmentId)} className="btn btn-sm" style={{ backgroundColor: '#F59E0B', color: '#fff', border: 'none' }}>
-                Dismiss
-              </button>
-            </div>
-          ))
+            )
+          })
         ) : (
           <p className="alert-empty">No inactivity alerts.</p>
         )}

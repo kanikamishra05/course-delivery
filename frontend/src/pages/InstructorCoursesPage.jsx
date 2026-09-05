@@ -1,27 +1,12 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { getCourses } from '../services/courseApi'
+import { getCategoryStyle } from '../utils/courseIcons'
 
 const STATUS_BADGE = {
   DRAFT: { label: 'Draft', className: 'badge badge-warning' },
   PUBLISHED: { label: 'Published', className: 'badge badge-success' },
   ARCHIVED: { label: 'Archived', className: 'badge badge-danger' },
-}
-
-const getCategoryIcon = (categoryTitle) => {
-  const t = (categoryTitle || '').toLowerCase()
-  if (t.includes('network')) {
-    return <svg width="18" height="18" fill="none" stroke="#3b82f6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><rect x="16" y="16" width="6" height="6" rx="1"></rect><rect x="2" y="16" width="6" height="6" rx="1"></rect><rect x="9" y="2" width="6" height="6" rx="1"></rect><path d="M5 16v-3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3"></path><path d="M12 12V8"></path></svg>
-  } else if (t.includes('database')) {
-    return <svg width="18" height="18" fill="none" stroke="#16a34a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg>
-  } else if (t.includes('data structure') || t.includes('algorithm')) {
-    return <svg width="18" height="18" fill="none" stroke="#ea580c" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><line x1="6" y1="3" x2="6" y2="15"></line><circle cx="18" cy="6" r="3"></circle><circle cx="6" cy="18" r="3"></circle><path d="M18 9a9 9 0 0 1-9 9"></path></svg>
-  } else if (t.includes('javascript') || t.includes('js')) {
-    return <svg width="18" height="18" fill="none" stroke="#d97706" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
-  } else if (t.includes('full stack') || t.includes('web')) {
-    return <svg width="18" height="18" fill="none" stroke="#9333ea" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
-  }
-  return <svg width="18" height="18" fill="none" stroke="#475569" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
 }
 
 export default function InstructorCoursesPage() {
@@ -117,7 +102,9 @@ export default function InstructorCoursesPage() {
                   <tr key={course._id}>
                     <td>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        {getCategoryIcon(course.category || course.title)}
+                        <span style={{ color: getCategoryStyle(course.category || course.title).color, display: 'flex', alignItems: 'center' }}>
+                          {getCategoryStyle(course.category || course.title).icon}
+                        </span>
                         <Link to={`/courses/${course._id}`} style={{ fontWeight: 500 }}>{course.title}</Link>
                       </div>
                     </td>

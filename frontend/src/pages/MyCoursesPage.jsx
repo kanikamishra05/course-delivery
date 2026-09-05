@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { getCourses } from '../services/courseApi'
+import { getCategoryStyle } from '../utils/courseIcons'
 
 export default function MyCoursesPage() {
   const [courses, setCourses] = useState([])
@@ -40,17 +41,29 @@ export default function MyCoursesPage() {
         </div>
       ) : (
         <div className="metric-grid">
-          {courses.map((course) => (
-            <div key={course._id} className="card flex flex-col justify-between">
-              <div>
-                <h3 className="card-title"><Link to={`/courses/${course._id}`}>{course.title}</Link></h3>
-                <p className="card-meta mb-4 line-clamp-3">{course.description}</p>
+          {courses.map((course) => {
+            const styleConfig = getCategoryStyle(course.category || course.title)
+            return (
+              <div key={course._id} className="card flex flex-col justify-between" style={{ position: 'relative', overflow: 'hidden' }}>
+                <div style={{ color: styleConfig.color, position: 'absolute', top: 0, right: 0, pointerEvents: 'none' }}>
+                  {styleConfig.bgSvg}
+                </div>
+
+                <div style={{ position: 'relative', zIndex: 1 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '48px', height: '48px', borderRadius: '12px', backgroundColor: styleConfig.bg, color: styleConfig.color }}>
+                      {styleConfig.icon}
+                    </div>
+                  </div>
+                  <h3 className="card-title"><Link to={`/courses/${course._id}`}>{course.title}</Link></h3>
+                  <p className="card-meta mb-4 line-clamp-3">{course.description}</p>
+                </div>
+                <div style={{ position: 'relative', zIndex: 1 }}>
+                  <span className="badge" style={{ backgroundColor: styleConfig.bg, color: styleConfig.color, border: `1px solid ${styleConfig.border}` }}>{course.category}</span>
+                </div>
               </div>
-              <div>
-                <span className="badge badge-info">{course.category}</span>
-              </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
       )}
     </div>

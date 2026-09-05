@@ -3,6 +3,7 @@ import { useParams, Link, useNavigate } from 'react-router-dom'
 import { getCourse, getCourseProgress, selfEnroll, updateLessonProgress } from '../services/courseApi'
 import { getCourseActivity, addCourseComment } from '../services/m06Api'
 import { useAuth } from '../context/AuthContext'
+import { getCategoryStyle } from '../utils/courseIcons'
 
 export default function CourseDetailPage() {
   const { id } = useParams()
@@ -146,6 +147,7 @@ export default function CourseDetailPage() {
   if (!course) return null
 
   const lessons = course.lessons || []
+  const styleConfig = getCategoryStyle(course.category || course.title)
 
   return (
     <div className="container" style={{ maxWidth: 800 }}>
@@ -154,10 +156,15 @@ export default function CourseDetailPage() {
           <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
           Back
         </button>
-        <h1 className="mb-2">{course.title}</h1>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '48px', height: '48px', borderRadius: '12px', backgroundColor: styleConfig.bg, color: styleConfig.color, flexShrink: 0 }}>
+            {styleConfig.icon}
+          </div>
+          <h1 className="mb-0">{course.title}</h1>
+        </div>
         <p className="text-muted" style={{ fontSize: '1.125rem' }}>{course.description}</p>
         <div className="mt-4">
-          <span className="badge badge-info">{course.category}</span>
+          <span className="badge" style={{ backgroundColor: styleConfig.bg, color: styleConfig.color, border: `1px solid ${styleConfig.border}` }}>{course.category}</span>
         </div>
       </div>
 

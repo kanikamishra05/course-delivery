@@ -28,8 +28,8 @@ function AppRoutes() {
       <Route path="/login" element={<GuestRoute><LoginPage /></GuestRoute>} />
       <Route path="/register" element={<GuestRoute><RegisterPage /></GuestRoute>} />
 
-      {/* Home (role-based redirect handled in HomePage) */}
-      <Route path="/" element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
+      {/* Home (role-based redirect or public landing page handled in HomePage) */}
+      <Route path="/" element={<HomePage />} />
 
       {/* Instructor Dashboard & Courses */}
       <Route path="/dashboard" element={<ProtectedRoute roles={['INSTRUCTOR']}><DashboardPage /></ProtectedRoute>} />
