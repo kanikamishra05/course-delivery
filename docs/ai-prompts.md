@@ -196,3 +196,33 @@ The demo seed process was subsequently reviewed for idempotency. The cleanup
 logic was corrected to remove dependent Progress and Alert records when old
 demo enrollments are refreshed, preventing orphaned records when the seed is
 run repeatedly.
+
+---
+
+## Example of an AI Output That Required Correction
+
+### Prompt
+
+Asked the AI agent to implement learner progress tracking, including lesson
+completion and un-completion, progress state calculation, and updating the
+learner's last progress time when progress changes.
+
+### What went wrong
+
+During review, I found that submitting a completion request for a lesson that
+was already marked as completed could still update `lastProgressAt` and create
+another progress-related activity event.
+
+This was incorrect because no actual progress change had occurred.
+
+### What I changed
+
+I changed the progress handling so that progress-related side effects only
+occur when the learner's completion state actually changes.
+
+If a learner completes an already completed lesson, the request no longer
+updates `lastProgressAt` or creates a redundant activity event.
+
+I then re-ran the relevant M04 runtime tests and verified that normal
+completion, un-completion, repeated completion, and cross-course progress
+attempts behaved correctly.

@@ -28,7 +28,7 @@ export default function LoginPage() {
 
   return (
     <div className="container" style={{ maxWidth: 480 }}>
-      <div className="card">
+      <div className="card" style={{ borderColor: '#d1d5db' }}>
         <h1 className="text-center mb-6">Welcome Back</h1>
         {error && <div className="alert-box alert-empty mb-4 text-center">{error}</div>}
         <form onSubmit={handleSubmit}>

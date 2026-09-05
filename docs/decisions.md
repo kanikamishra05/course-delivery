@@ -78,8 +78,30 @@ This section records the main technical decisions made during the development of
 
   Inactivity is a changing state rather than a permanent event. Calculating the current inactivity status from learner progress allows alerts to become relevant again when a learner becomes inactive after making progress. Storing dismissal information separately also allows instructors to dismiss an alert without losing the underlying learner progress information.
 
-## Reversed Decisions
+---
 
-No major architectural decisions were reversed during development. Later
-changes were implementation corrections and verification improvements rather
-than changes to the chosen architecture or design.
+## Reversed Decision
+
+- **Originally chose:**
+
+  Allow a lesson completion request to update the learner's
+  `lastProgressAt` and create a progress activity event whenever the
+  completion endpoint was called.
+
+- **Later changed to:**
+
+  Only update `lastProgressAt` and create a progress activity event when
+  the learner's actual completion state changes.
+
+- **Why I reversed it:**
+
+  During testing, I found that submitting completion for an already completed
+  lesson could create a redundant activity event and update the learner's
+  last-progress timestamp even though no new progress had occurred.
+
+  This could make the inactivity alert logic inaccurate because repeated
+  requests could make a learner appear active without actually making
+  progress.
+
+  I therefore changed the implementation so that progress-related side
+  effects occur only when the completion state actually changes.

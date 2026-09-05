@@ -150,7 +150,10 @@ export default function CourseDetailPage() {
   return (
     <div className="container" style={{ maxWidth: 800 }}>
       <div className="mb-6">
-        <button onClick={() => navigate(-1)} className="btn btn-secondary btn-sm mb-4">← Back</button>
+        <button onClick={() => navigate(-1)} className="btn btn-secondary btn-sm mb-4" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '0.375rem 0.75rem', borderRadius: '6px', color: '#334155', backgroundColor: 'transparent' }}>
+          <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+          Back
+        </button>
         <h1 className="mb-2">{course.title}</h1>
         <p className="text-muted" style={{ fontSize: '1.125rem' }}>{course.description}</p>
         <div className="mt-4">
@@ -201,11 +204,17 @@ export default function CourseDetailPage() {
                       style={{ marginTop: '0.25rem', width: '1.25rem', height: '1.25rem', cursor: 'pointer' }}
                     />
                   )}
-                  <div>
-                    <strong style={{ textDecoration: isCompleted ? 'line-through' : 'none', color: isCompleted ? 'var(--text-muted)' : 'var(--primary)', fontSize: '1.05rem' }}>
-                      {idx + 1}. {lesson.title}
-                    </strong>
-                    {lesson.content && <p className="text-muted mb-0 mt-1" style={{ fontSize: '0.875rem' }}>{lesson.content}</p>}
+                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', flex: 1 }}>
+                    <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24" style={{ flexShrink: 0, marginTop: '2px', color: isCompleted ? 'var(--text-muted)' : '#3b82f6' }}>
+                      <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                      <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+                    </svg>
+                    <div>
+                      <strong style={{ textDecoration: isCompleted ? 'line-through' : 'none', color: isCompleted ? 'var(--text-muted)' : 'var(--primary)', fontSize: '1.05rem', display: 'block' }}>
+                        {idx + 1}. {lesson.title}
+                      </strong>
+                      {lesson.content && <p className="text-muted mb-0 mt-1" style={{ fontSize: '0.875rem' }}>{lesson.content}</p>}
+                    </div>
                   </div>
                 </div>
               )
@@ -216,7 +225,10 @@ export default function CourseDetailPage() {
     
       {canViewActivity && (
         <div className="card">
-          <h2 className="mb-4">Activity History</h2>
+          <h2 className="mb-4" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+            Activity History
+          </h2>
           
           <form onSubmit={handleAddComment} className="flex gap-2 mb-6">
             <input 

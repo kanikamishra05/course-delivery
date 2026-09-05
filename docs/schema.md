@@ -175,7 +175,9 @@ The `ACTIVITY_EVENT_TYPES` array is also exported from this module so service co
 - Publishing guard — implemented in M03; a course must have at least one lesson before publishing
 - Course and lesson ownership — implemented in M03; instructors can only modify their own courses and lessons
 - Enrollment rules — implemented in M04/M05; learners can self-enroll in published courses, instructors can enroll learners in their own courses or bulk-enroll learners, and duplicate or unauthorized enrollments are rejected
-- ActivityLog immutability — # Schema
+- ActivityLog immutability — implemented in M06; activity records have no update or delete API and are treated as append-only
+- Activity event actor tracking — implemented in M06; each activity record stores the `actorId` of the user responsible for the event
+- Inactivity alert rules — implemented in M06; alerts are based on learner progress, the 14-day inactivity period, and dismissal/reappearance rules
 
 This section describes the database collections used in the project, their main fields, relationships, and the constraints applied to the data.
 
@@ -196,4 +198,4 @@ None at MVP. Progress status is **derived at read-time** from Progress record co
 - `GET /api/courses` with search + filters — needs index on `Course.title` for text search (currently uses regex; a `$text` index would be needed at scale)
 - `GET /api/alerts` — evaluates IN_PROGRESS enrollments to identify inactive learners. The `lastProgressAt` index helps reduce the cost of inactivity-related queries, but this could still become expensive at much larger scale
 - Dashboard aggregations — `$group` pipelines on large Progress/Enrollment collections; `Progress.completedAt` and `Enrollment.courseId` indexes help
-- ActivityLog feed — unbounded per course; would need cursor-based pagination at scale
+- ActivityLog feed — activity history can grow without a fixed upper bound per course; the current feed is indexed by course and creation time, but at much larger scale it would need cursor-based pagination and potentially retention/archival strategies

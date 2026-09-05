@@ -89,6 +89,8 @@ Add course and lesson management so instructors can create and manage courses, w
 
 * Add course status changes such as publish, archive, and restore
 
+* Add publishing guard so an empty course cannot be published
+
 * Add input validation
 
 * Add role-based access and instructor ownership checks
@@ -98,6 +100,9 @@ Add course and lesson management so instructors can create and manage courses, w
 ### Result
 
 M03 was completed and verified successfully. Instructors can create and manage their own courses and lessons, while learners and public users can view published courses. Course status changes, input validation, role-based access control, and instructor ownership checks were also tested successfully.
+
+The publishing guard was also verified to prevent publishing a course that
+does not contain any lessons.
 
 ---
 
@@ -116,6 +121,7 @@ Add enrollment functionality for learners and instructors, and track learner pro
 * Add authorization and course ownership checks for instructor enrollment
 * Add learner progress tracking based on completed lessons
 * Track progress states such as NOT_STARTED, IN_PROGRESS, and COMPLETED
+* Reject invalid learner progress state transitions on the server
 * Calculate learner progress percentage
 * Allow learners to mark lessons as completed or incomplete
 * Ensure progress is scoped to the authenticated learner
@@ -138,13 +144,13 @@ Complete the course discovery and instructor management features by adding searc
 
 **What I planned to do**
 
-* Add course search
+* Add server-side course search
 
-* Add course filtering
+* Add server-side course filtering
 
-* Add course sorting
+* Add server-side course sorting
 
-* Add pagination for course discovery
+* Add server-side pagination for course discovery
 
 * Add bulk enrollment of learners
 
@@ -158,7 +164,8 @@ Complete the course discovery and instructor management features by adding searc
 
 ### Result
 
-M05 was completed and runtime-verified successfully. Course discovery now supports search, filtering, sorting, and pagination. Instructors can bulk enroll learners and see the result for newly enrolled, already enrolled, and unknown addresses.
+M05 was completed and runtime-verified successfully. Course discovery now supports server-side search, filtering, sorting, and
+pagination without loading the complete course catalogue into the browser. Instructors can bulk enroll learners and see the result for newly enrolled, already enrolled, and unknown addresses.
 
 CSV export was added for enrollment and learner progress information, with access restricted to the instructor who owns the course. An instructor dashboard was also added to provide course and learner-related information.
 
@@ -172,7 +179,13 @@ Add activity history and learner inactivity alerts so course activity can be tra
 
 **What I planned to do**
 
-* Add activity logging for important course, lesson, enrollment, and progress events
+* Record course creation and edits
+
+* Record publish, archive, and restore transitions
+
+* Record lesson, enrollment, and progress events
+
+* Record the user responsible for each activity
 
 * Add activity history to the course details page
 
@@ -180,7 +193,8 @@ Add activity history and learner inactivity alerts so course activity can be tra
 
 * Keep activity history append-only so existing records cannot be modified or deleted
 
-* Add inactivity alerts for learners who have not made progress for 14 days
+* Add inactivity alerts for learners whose progress has been inactive for
+more than 14 days
 
 * Allow instructors to dismiss inactivity alerts
 
@@ -195,6 +209,8 @@ Add activity history and learner inactivity alerts so course activity can be tra
 ### Result
 
 M06 was completed and runtime-verified successfully. Activity history now records the main course, lesson, enrollment, and learner progress events. Authorized users can also add comments to the activity history from the course details page.
+
+Activity records are append-only and cannot be edited or deleted through the application.
 
 Inactivity alerts were added for learners who have not made progress for 14 days. Instructors can dismiss these alerts, and the alert can reappear if the learner becomes inactive again after making progress.
 
@@ -234,3 +250,27 @@ backend, and the application was tested through the deployed environment.
 
 The final documentation and submission files were reviewed and updated before
 final submission.
+
+---
+
+## What I cut when time was limited
+
+I did not cut any of the ten required goals. The required functionality was
+completed before final submission.
+
+The optional stretch ideas were intentionally not implemented. After the
+required functionality was completed, the remaining time was used for runtime
+verification, regression testing, deployment, documentation, demo-data
+verification, and final UI polishing instead.
+
+The optional features left out were:
+
+- Quizzes with automatic scoring
+- Certificates on completion
+- Discussion threads per lesson
+- Prerequisite courses
+- Video lessons with watch-progress tracking
+- Course ratings and reviews
+- Learning paths
+- Downloadable resources per lesson
+- Email digest of inactive learners
